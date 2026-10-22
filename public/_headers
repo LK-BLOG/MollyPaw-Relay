@@ -1,0 +1,21 @@
+# MollyPaw Online — 缓存与安全响应头
+# 部署到 Cloudflare Pages 后生效。
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+
+/api/*
+  Cache-Control: no-store
+  Access-Control-Allow-Origin: *
+
+/download/*
+  Cache-Control: public, max-age=3600
+
+/assets/*
+  Cache-Control: public, max-age=86400
+
+/index.html
+  Cache-Control: public, max-age=300

@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Node / wrangler
+node_modules/
+.wrangler/
+
+# 部署产物
+dist/
+.dev.vars
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# 系统
+.DS_Store
+Thumbs.db
+desktop.ini

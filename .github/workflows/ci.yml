@@ -1,0 +1,65 @@
+name: ci
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  # 本地中继的行为必须和 Durable Object 一致 —— 两边跑同一组契约测试
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest websockets
+      - name: Relay contract tests
+        run: python -m pytest tests/ -q
+      - name: Check protocol constants match the Worker
+        run: |
+          python - <<'PY'
+          import re, sys
+          proto = open("PROTOCOL.md", encoding="utf-8").read()
+          worker = open("worker/src/relay-room.js", encoding="utf-8").read()
+          checks = {
+              "max frame": (r"1 MiB|1048576", r"MAX_FRAME\s*=\s*1024\s*\*\s*1024"),
+              "rate limit": (r"120 帧", r"RATE_MAX_FRAMES\s*=\s*120"),
+              "hello deadline": (r"10 秒", r"HELLO_DEADLINE_MS\s*=\s*10\s*\*\s*1000"),
+          }
+          bad = []
+          for name, (p_pat, w_pat) in checks.items():
+              if not re.search(p_pat, proto):
+                  bad.append(f"PROTOCOL.md 里找不到 {name}")
+              if not re.search(w_pat, worker):
+                  bad.append(f"relay-room.js 里找不到 {name}")
+          if bad:
+              print("\n".join(bad)); sys.exit(1)
+          print("协议与 Worker 的关键常量一致")
+          PY
+
+  # 部署：只在校验通过后发
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Deploy Worker (Durable Object)
+        working-directory: worker
+        run: npx wrangler@4 deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Deploy Pages
+        run: npx wrangler@4 pages deploy public --project-name=mollypaw-online --branch=main
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

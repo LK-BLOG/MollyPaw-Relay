@@ -1,0 +1,14 @@
+name = "mollypaw-online"
+pages_build_output_dir = "./public"
+compatibility_date = "2025-04-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Durable Object 绑定：类由独立 Worker `mollypaw-relay-room` 导出。
+# Pages 项目自己不能创建 DO 类，只能绑（PROTOCOL.md §1）。
+[[durable_objects.bindings]]
+name = "RELAY_ROOM"
+class_name = "RelayRoom"
+script_name = "mollypaw-relay-room"
+
+[vars]
+RELAY_VERSION = "1"

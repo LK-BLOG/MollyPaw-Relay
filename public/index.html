@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MollyPaw Online — 手机连着你的 AI</title>
+<meta name="description" content="MollyPaw 远程互联：手机通过端到端加密通道连上你家电脑上的 AI Agent。聊天、审批、传文件，全程密文，中继看不到内容。">
+<meta name="theme-color" content="#6B4226">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top">
+      <span class="brand-paw" aria-hidden="true">🐾</span>
+      <span>MollyPaw <em>Online</em></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#what">这是什么</a>
+      <a href="#how">怎么用</a>
+      <a href="#safe">安全</a>
+      <a href="#get">下载</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div class="hero-text">
+      <p class="eyebrow">远程互联 · 端到端加密</p>
+      <h1>手机牵着<br><span class="hl">你家的 AI</span>。</h1>
+      <p class="lede">
+        MollyPaw 跑在你自己的电脑上。现在，人不在电脑前也能用它 ——
+        手机连上去，聊天、看它干活、点同意、传文件。
+      </p>
+      <p class="lede strong">
+        每个字都是密文。<strong>我们看不到，Cloudflare 也看不到。</strong>
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#get">下载安卓端</a>
+        <a class="btn btn-ghost" href="#how">看看怎么配对</a>
+      </div>
+      <ul class="facts">
+        <li><b>AES-256-GCM</b><span>每个包都认证加密</span></li>
+        <li><b>X25519</b><span>每条连接独立换钥</span></li>
+        <li><b>0 明文</b><span>中继只转发不解析</span></li>
+      </ul>
+    </div>
+
+    <div class="hero-card">
+      <div class="card-head">
+        <span class="dot ok"></span>
+        <span>中继状态</span>
+        <span class="tag" id="relayTag">检查中…</span>
+      </div>
+      <pre class="code" id="wsSample">wss://mollypaw-online.pages.dev/server?room=&lt;32位hex&gt;</pre>
+      <div class="card-foot">
+        <span class="muted">连不上时点这里</span>
+        <button class="link-btn" id="relayRetry" type="button">重新检查</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="what">
+  <div class="wrap">
+    <h2>它不是云盘，也不是网页版。<em>是你的电脑在干活。</em></h2>
+    <p class="section-lede">
+      模型调用、文件读写、命令执行 —— 全部发生在你自己那台机器上。
+      手机只是你的遥控器。
+    </p>
+    <div class="grid">
+      <article class="card">
+        <h3>聊天 + 真流式</h3>
+        <p>字是边生成边推过来的，不是转圈等一坨。电脑上真断得掉，不是假按钮。</p>
+      </article>
+      <article class="card">
+        <h3>工具审批</h3>
+        <p>它要删文件、跑命令，手机上直接弹出来给你点同意或拒绝。不做超时偷袭。</p>
+      </article>
+      <article class="card">
+        <h3>会话管理</h3>
+        <p>新建、切换、删除，跟坐在电脑前一样。手机和电脑看到同一份历史。</p>
+      </article>
+      <article class="card">
+        <h3>文件收发</h3>
+        <p>翻电脑上的目录、拉文件到手机。想把手机里的东西丢给它分析也行。</p>
+      </article>
+      <article class="card">
+        <h3>急停</h3>
+        <p>它开始瞎搞，一键停。真杀进程树，不是"已发送停止请求"。</p>
+      </article>
+      <article class="card">
+        <h3>观察模式</h3>
+        <p>给别人的手机开只读：能看它在干什么，动不了任何东西。</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section alt" id="how">
+  <div class="wrap">
+    <h2>三步。<em>两分钟。</em></h2>
+    <ol class="steps">
+      <li>
+        <span class="num">1</span>
+        <h3>电脑上生成配对码</h3>
+        <p>MollyPaw 设置 → 远程互联 → 添加设备。屏幕上出来一个 <b>6 位数字</b>，5 分钟内有效。</p>
+      </li>
+      <li>
+        <span class="num">2</span>
+        <h3>手机填三样东西</h3>
+        <p>中继地址（已经帮你填好）、你自己定的<b>连接密钥</b>、配对码。</p>
+        <p class="warn">密钥至少 16 位，要有大写、小写、数字。这串东西别用生日。</p>
+      </li>
+      <li>
+        <span class="num">3</span>
+        <h3>开用</h3>
+        <p>绑好之后就不用再输配对码了。密钥换一次，所有设备重配一次。</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="section" id="safe">
+  <div class="wrap">
+    <h2>安全这块<em>说清楚</em></h2>
+    <div class="safe-grid">
+      <div class="card">
+        <h3>中继能看到什么</h3>
+        <ul class="ticks">
+          <li>房间号（由你的密钥派生，猜不到）</li>
+          <li>连接的角色和时间</li>
+          <li>每个包多大</li>
+        </ul>
+      </div>
+      <div class="card danger">
+        <h3>中继看不到什么</h3>
+        <ul class="crosses">
+          <li>你的消息内容</li>
+          <li>你的 API Key</li>
+          <li>你传的文件</li>
+          <li>你的会话历史</li>
+          </ul>
+      </div>
+    </div>
+    <p class="section-lede">
+      密钥只存在你手机和电脑上，服务器上没有副本。
+      所以<b>密钥丢了谁都救不回来</b> —— 包括我们。
+    </p>
+  </div>
+</section>
+
+<section class="section alt" id="get">
+  <div class="wrap">
+    <h2>下载</h2>
+    <div class="dl-box">
+      <div class="dl-main">
+        <h3>Android 客户端</h3>
+        <p>需要 Android 8.0 以上。首次安装要在系统里允许"安装未知来源应用"。</p>
+        <a class="btn btn-primary" id="apkBtn" href="download/" download>下载 APK</a>
+        <p class="muted" id="apkMeta">正在读取版本信息…</p>
+      </div>
+      <div class="dl-side">
+        <h3>电脑端</h3>
+        <p>MollyPaw 桌面版。远程互联功能在<b>设置 → 远程互联</b>里开关。</p>
+        <a class="btn btn-ghost" href="https://mollypaw.pages.dev" target="_blank" rel="noopener">去官网下载</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="faq">
+  <div class="wrap">
+    <h2>你可能想问的</h2>
+    <details>
+      <summary>为什么要用 Cloudflare 中转？不能直连吗？</summary>
+      <p>你电脑在家用宽带后面，外面进不来。中继只负责把两个出站连接对上，然后它就成了个"看不见内容的邮差"。</p>
+    </details>
+    <details>
+      <summary>密钥泄露了会怎样？</summary>
+      <p>拿到密钥的人能连上你的电脑，并且能读你电脑上的文件 —— 这是给手机开放的能力，我们没给它上锁。所以密钥必须够强，丢了立刻在电脑上换。</p>
+    </details>
+    <details>
+      <summary>电脑关机了手机能干嘛？</summary>
+      <p>什么都不能。会明确告诉你"电脑端已离线"。我们不存离线消息，因为存了就得把密文放服务器上。</p>
+    </details>
+    <details>
+      <summary>支持 iPhone 吗？</summary>
+      <p>暂时没有。要做得有苹果开发者账号，目前没这个计划。</p>
+    </details>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="wrap">
+    <h2>把绳子系上</h2>
+    <p>你的 AI，跟着你走。</p>
+    <a class="btn btn-primary" href="#get">下载安卓端</a>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <div>
+      <span class="brand-paw">🐾</span>
+      <b>MollyPaw Online</b>
+    </div>
+    <nav class="foot-links">
+      <a href="https://github.com/LK-BLOG/MollyPaw" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://mollypaw.pages.dev" target="_blank" rel="noopener">官网</a>
+      <a href="/api/health" target="_blank" rel="noopener">中继状态</a>
+    </nav>
+    <p class="muted">GPLv3 · 灵感来自摩尼，一只可乐色和白色的小泰迪犬。</p>
+  </div>
+</footer>
+
+<script src="assets/main.js"></script>
+</body>
+</html>
