@@ -1,0 +1,710 @@
+/* ============================================================
+   MollyPaw Online — 远程互联官网
+   配色来自 BRAND.md：摩尼棕 + 摩尼白 + 爪印橙
+   禁止冷色（蓝/绿/灰）作为主色
+   ============================================================ */
+
+:root {
+  /* 摩尼棕 */
+  --brown-900: #3A2A1A;
+  --brown-700: #6B4226;
+  --brown-600: #8B5E3C;
+  --brown-500: #A67B5B;
+  --brown-300: #D2B48C;
+  --brown-200: #E4D2BC;
+  --brown-100: #F5EDE3;
+  /* 摩尼白 */
+  --white: #FFFFFF;
+  --cream: #FFF8F0;
+  /* 强调色 */
+  --orange: #D4823A;      /* 爪印橙 —— 色块、图标底、装饰 */
+  --orange-600: #B96C2A;  /* 按钮底 */
+  --orange-soft: #F7E6D2;
+  /* 橙底上的文字：浅色模式用深棕（5.92:1 达标，且在米白页面上更协调）；
+     暗色模式用同一个深色 —— 暗底上亮橙块反而更跳。 */
+  --on-orange: #23160D;
+
+  /* 主 CTA 按钮
+     BRAND.md 原文：「深棕 #6B4226 — 主文字、标题、**重点按钮**」。
+     之前我拿爪印橙当主 CTA，浅色版整页被橙色稀释、发闷。
+     主按钮用深棕，橙退到装饰/图标底/次级强调 —— 这样才符合品牌且有层次。 */
+  --btn-bg: var(--brown-700);
+  --btn-bg-hover: var(--brown-900);
+  --btn-fg: var(--cream);
+
+  --radius-s: 10px;
+  --radius: 18px;
+  --radius-l: 28px;
+  --shadow-s: 0 2px 8px rgba(107, 66, 38, .08);
+  --shadow: 0 10px 30px rgba(107, 66, 38, .13);
+  --shadow-l: 0 24px 60px rgba(107, 66, 38, .18);
+
+  --wrap: 1160px;
+  --ease: cubic-bezier(.22, .8, .28, 1);
+
+  --font: "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei UI", "Microsoft YaHei",
+          -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", "Cascadia Code", Consolas, "SF Mono", ui-monospace, monospace;
+
+  /* 语义色
+     BRAND.md：「米白 #FFF8F0 — 次级背景、页面底色」「纯白 #FFFFFF — 主背景、输入框」
+     「卡片使用纯白 #FFFFFF，与背景形成微妙层次」
+
+     实测：直接拿 #FFF8F0 当整页底 + 白卡片 + 奶棕边框，
+     三者明度太接近（8.20 / 8.63 / 1.2），整页糊成一片米色、没有焦点 —— 用户骂"发闷"。
+     所以页面底用「白到米白的极窄渐变」（#FFFFFF → #FFFCF8），
+     既有 BRAND 的暖调，又让白卡片靠阴影浮起来。 */
+  --page-bg: #FFFFFF;
+  --card-bg: #FFFFFF;
+  --card-warm: #FFFCF8;   /* 卡片底：一点点暖，靠阴影浮起 */
+  --line: var(--brown-100);
+  --line-strong: var(--brown-200);
+  --text: var(--brown-700);
+  --text-soft: var(--brown-600);
+  --text-mute: var(--brown-500);
+  --hero-code-bg: var(--brown-900);
+
+  /* 文字专用色：BRAND 说「文字用深棕，避免纯黑」。
+     爪印橙 #D4823A 当文字只有 2.83:1（米白底），不达标 ——
+     所以橙色只做背景/色块/图标底，文字一律走深棕。
+     需要区分时用 --text-accent（深棕），靠下划线和字重拉开层次。 */
+  --text-accent: var(--brown-700);
+}
+
+/* ---------- 暗色（技术版） ---------- */
+html[data-mode="dev"] {
+  --page-bg: #1C1310;
+  --card-bg: #261B14;
+  --line: #3A2A1F;
+  --line-strong: #4A3626;
+  --text: #F6E7D6;
+  --text-soft: #D9C0A4;
+  --text-mute: #A98A6B;
+  --brown-100: #33241A;
+  --brown-200: #45311F;
+  --brown-300: #7A5B3E;
+  --brown-500: #A98A6B;
+  --brown-600: #D9C0A4;
+  --brown-700: #F6E7D6;
+  --white: #261B14;
+  --cream: #1C1310;
+  --orange: #E0913F;
+  --orange-600: #F0A457;
+  --orange-soft: #3A2818;
+  --on-orange: #23160D;
+  --card-warm: #261B14;
+  --btn-bg: var(--orange);
+  --btn-bg-hover: #F0A457;
+  --btn-fg: #23160D;
+  --text-accent: var(--brown-700);
+  --shadow-s: 0 2px 10px rgba(0, 0, 0, .45);
+  --shadow: 0 12px 34px rgba(0, 0, 0, .55);
+  --shadow-l: 0 26px 64px rgba(0, 0, 0, .65);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--page-bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  transition: background .3s var(--ease), color .3s var(--ease);
+}
+/* 浅色版加一层极淡的暖色晕染 —— 纯米白看着是"发灰"，
+   加了暖调才像"摩尼的毛色"而不是"没上色的白纸"。 */
+html[data-mode="lite"] body {
+  background:
+    radial-gradient(58% 40% at 10% 2%, rgba(212, 130, 58, .10), transparent 70%),
+    radial-gradient(50% 36% at 90% 18%, rgba(166, 123, 91, .10), transparent 72%),
+    linear-gradient(180deg, #FFFFFF 0%, #FFFCF8 45%, #FFF9F2 100%);
+  background-attachment: fixed;
+}
+
+h1, h2, h3 { line-height: 1.3; margin: 0 0 .5em; color: var(--text); font-weight: 800; }
+p { margin: 0 0 1em; }
+a { color: var(--text-accent); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--orange); text-decoration-thickness: 2px; }
+a:hover { color: var(--text-accent); text-decoration-color: var(--text-accent); }
+code {
+  font-family: var(--mono);
+  font-size: .88em;
+  background: var(--brown-100);
+  padding: 2px 7px;
+  border-radius: 6px;
+  word-break: break-word;
+}
+html[data-mode="dev"] code { background: var(--brown-100); color: var(--orange-600); }
+strong { font-weight: 800; }
+/* 强调：橙字在白底只有 2.83:1 且视觉发闷，
+   改成「深棕字 + 橙色荧光块」。
+   注意：不能用 z-index:-1 —— body 有 background + background-attachment:fixed，
+   会形成层叠上下文，负 z-index 的伪元素会沉到 body 背景下面，直接消失。
+   改用 ::before 垫在文字后面（同为负偏移，但元素自身 position:relative + z-index:0）。 */
+em { font-style: normal; color: var(--text-accent); position: relative; z-index: 0; }
+em::before {
+  content: ""; position: absolute; left: -4%; right: -4%; bottom: .04em;
+  height: .3em; background: var(--orange-soft);
+  border-radius: 4px; z-index: -1;
+}
+html[data-mode="dev"] em::before { background: #4A3626; }
+
+.wrap { width: min(var(--wrap), calc(100% - 40px)); margin-inline: auto; }
+.muted { color: var(--text-mute); font-size: 14px; }
+
+.skip-link {
+  position: absolute; left: -9999px; top: 0; z-index: 999;
+  background: var(--orange); color: var(--on-orange); padding: 12px 20px; border-radius: 0 0 10px 0;
+  font-weight: 700;
+}
+.skip-link:focus { left: 0; }
+
+/* ══════════ 导航 ══════════ */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255, 255, 255, .92);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border-bottom: 1px solid transparent;
+  transition: box-shadow .25s var(--ease), background .3s var(--ease);
+}
+html[data-mode="dev"] .nav { background: rgba(28, 19, 16, .88); }
+.nav.scrolled {
+  background: rgba(255, 255, 255, .98);
+  border-bottom-color: var(--line-strong);
+  box-shadow: 0 8px 26px rgba(107, 66, 38, .08);
+}
+html[data-mode="dev"] .nav.scrolled {
+  background: rgba(28, 19, 16, .96);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, .5);
+}
+.nav-inner {
+  display: flex; align-items: center; gap: 20px;
+  height: 66px;
+}
+.brand {
+  display: inline-flex; align-items: center; gap: 10px;
+  color: var(--text); font-weight: 900; font-size: 19px; letter-spacing: -.01em;
+  flex: none;
+}
+.brand:hover { color: var(--text); }
+.brand-paw { width: 26px; height: 26px; color: var(--orange); flex: none; }
+/* 品牌名：MollyPaw 是产品本体，Online 是本站特色 —— 后者更突出 */
+.brand-text { font-size: 19px; letter-spacing: -.015em; }
+.brand-text em {
+  font-style: normal; color: var(--orange);
+  font-weight: 900;
+  padding: 2px 9px; margin-left: 2px;
+  background: var(--orange-soft); border-radius: 7px;
+  font-size: .82em; letter-spacing: .01em;
+  display: inline-block; vertical-align: 2px;
+}
+html[data-mode="dev"] .brand-text em { background: #3A2818; color: var(--orange); }
+.foot b em {
+  font-style: normal; color: var(--orange); font-weight: 900;
+}
+
+.nav-links {
+  display: flex; align-items: center; gap: 4px;
+  margin-left: auto;
+}
+.nav-links a {
+  color: var(--text-soft); font-size: 14.5px; font-weight: 600;
+  padding: 8px 12px; border-radius: 9px;
+  transition: background .2s, color .2s;
+}
+.nav-links a:hover { background: var(--brown-100); color: var(--text); }
+.nav-mode-entry { color: var(--text-accent) !important; }
+
+.nav-actions { display: flex; align-items: center; gap: 10px; flex: none; }
+
+/* 模式切换 */
+.mode-switch {
+  position: relative; display: inline-grid; grid-template-columns: 1fr 1fr;
+  padding: 3px; border-radius: 999px; background: var(--brown-100);
+  border: 1px solid var(--line-strong);
+}
+.ms-btn {
+  position: relative; z-index: 2;
+  border: 0; background: none; cursor: pointer;
+  font-family: inherit; font-size: 13px; font-weight: 700;
+  color: var(--text-mute); padding: 6px 14px; border-radius: 999px;
+  transition: color .2s;
+}
+.ms-btn[aria-selected="true"] { color: var(--on-orange); }
+.ms-thumb {
+  position: absolute; z-index: 1; top: 3px; bottom: 3px; left: 3px;
+  width: calc(50% - 3px); border-radius: 999px; background: var(--orange);
+  box-shadow: 0 3px 10px rgba(212, 130, 58, .38);
+  transition: transform .28s var(--ease);
+}
+/* 切到技术版时把滑块推到右边 —— 漏了这条，滑块会永远停在左边 */
+html[data-mode="dev"] .ms-thumb { transform: translateX(100%); }
+html[data-mode="dev"] .ms-btn[aria-selected="true"] { color: var(--on-orange); }
+.mode-btn-mobile {
+  display: none; border: 1px solid var(--line-strong); background: var(--card-bg);
+  color: var(--text); font-family: inherit; font-size: 13px; font-weight: 700;
+  padding: 7px 12px; border-radius: 999px; cursor: pointer;
+}
+
+.nav-toggle {
+  display: none; flex-direction: column; gap: 4px;
+  background: none; border: 0; cursor: pointer; padding: 8px;
+}
+.nav-toggle span { width: 20px; height: 2px; background: var(--text); border-radius: 2px; }
+
+/* ══════════ 按钮 ══════════ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: inherit; font-size: 14.5px; font-weight: 700;
+  padding: 10px 20px; border-radius: 11px; border: 1px solid transparent;
+  cursor: pointer; transition: transform .15s var(--ease), background .2s, color .2s, border-color .2s;
+  white-space: nowrap;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-primary { background: var(--btn-bg); color: var(--btn-fg); }
+.btn-primary:hover { background: var(--btn-bg-hover); color: var(--btn-fg); }
+.btn-outline { border-color: var(--line-strong); color: var(--text); }
+.btn-outline:hover { background: var(--card-bg); border-color: var(--brown-300); }
+.btn-ghost { color: var(--text-soft); border-color: var(--line-strong); }
+.btn-ghost:hover { background: var(--brown-100); color: var(--text); }
+.btn-lg { padding: 14px 28px; font-size: 16px; border-radius: 13px; }
+
+.link-btn {
+  background: none; border: 0; padding: 0; cursor: pointer;
+  font-family: inherit; font-size: 13.5px; font-weight: 700;
+  color: var(--text-accent); text-decoration: underline;
+  text-underline-offset: 3px; text-decoration-color: var(--orange);
+  text-decoration-thickness: 2px;
+}
+.link-btn:hover { color: var(--text-accent); text-decoration-color: var(--text-accent); }
+
+/* ══════════ HERO ══════════ */
+.hero { position: relative; padding: 84px 0 72px; overflow: hidden; }
+.hero-glow {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(42% 48% at 18% 22%, rgba(212, 130, 58, .16), transparent 70%),
+    radial-gradient(38% 44% at 82% 12%, rgba(140, 94, 60, .18), transparent 72%);
+}
+html[data-mode="dev"] .hero-glow {
+  background:
+    radial-gradient(42% 48% at 18% 22%, rgba(212, 130, 58, .22), transparent 70%),
+    radial-gradient(38% 44% at 82% 12%, rgba(140, 94, 60, .30), transparent 72%);
+}
+.hero-inner {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center;
+}
+.hero-copy .pill {
+  display: inline-flex; align-items: center; gap: 9px; flex-wrap: wrap;
+  background: var(--card-bg); border: 1px solid var(--line-strong);
+  color: var(--text-soft); border-radius: 999px;
+  padding: 7px 16px; font-size: 13px; font-weight: 700; margin-bottom: 22px;
+}
+.pill-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--orange);
+  box-shadow: 0 0 0 4px rgba(212, 130, 58, .18);
+}
+.ver-sep { opacity: .45; }
+
+.hero h1 {
+  font-size: clamp(38px, 5.4vw, 62px);
+  letter-spacing: -.025em; margin-bottom: 10px;
+}
+.hero h1 .hl {
+  color: var(--text-accent);
+  position: relative; display: inline-block; z-index: 0;
+}
+/* h1 高亮：深棕字 + 橙色荧光块。
+   用 ::before 而不是 ::after —— 负 z-index 的伪元素会沉到 body 背景下面（消失）。 */
+.hero h1 .hl::before {
+  content: ""; position: absolute; left: -5%; right: -5%; bottom: .06em;
+  height: .32em; background: var(--orange); border-radius: 5px; z-index: -1;
+  opacity: .75;
+}
+html[data-mode="dev"] .hero h1 .hl::before { opacity: .55; }
+.slogan {
+  font-family: var(--mono); font-size: 13.5px; color: var(--text-mute);
+  margin-bottom: 26px; letter-spacing: .01em;
+}
+.lede { font-size: 17.5px; color: var(--text-soft); margin-bottom: 14px; max-width: 56ch; }
+.lede-2 { font-size: 16px; }
+.hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin: 28px 0 22px; }
+.hero-meta {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-wrap: wrap; gap: 10px 26px;
+  font-size: 14px; color: var(--text-mute);
+}
+.hero-meta li { position: relative; padding-left: 18px; }
+.hero-meta li::before {
+  content: ""; position: absolute; left: 0; top: .65em;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--orange);
+}
+
+/* ---------- 拓扑图 ---------- */
+.topo {
+  background: var(--card-warm); border: 1px solid var(--line-strong);
+  border-radius: var(--radius-l); padding: 26px 24px;
+  box-shadow: var(--shadow-l);
+}
+.topo-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-bottom: 18px;
+}
+.topo-title { font-size: 12.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--text-mute); }
+.topo-svg { width: 100%; height: auto; display: block; overflow: visible; }
+.topo-node rect { fill: var(--card-warm); stroke: var(--brown-300); stroke-width: 1.5; }
+/* 图标通用样式 —— 必须给 .ico 本身定义，
+   否则 .topo-enc 里的锁（不在 .topo-node 内）会变成实心黑块 */
+.ico { fill: none; stroke: var(--brown-700); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.ico-solid { fill: var(--brown-300); stroke: none; }
+html[data-mode="dev"] .ico { stroke: var(--orange); }
+html[data-mode="dev"] .ico-solid { fill: var(--brown-300); }
+.topo-node .lbl { fill: var(--brown-900); font-size: 12.5px; font-weight: 800; }
+.topo-node .sub { fill: var(--brown-600); font-size: 10.5px; font-weight: 600; }
+.topo-relay rect { fill: var(--orange); stroke: var(--brown-700); stroke-width: 1.8; }
+.topo-wire { stroke: var(--orange); stroke-width: 2; fill: none; stroke-linecap: round; }
+.topo-wire-dash { stroke-dasharray: 6 6; animation: flow 1.2s linear infinite; }
+@keyframes flow { to { stroke-dashoffset: -24; } }
+.topo-arrow { fill: var(--orange); }
+.topo-note { fill: var(--text-mute); font-size: 11px; font-weight: 600; }
+.topo-enc { fill: var(--orange-soft); stroke: var(--orange); stroke-width: 1.4; }
+.topo-enc .ico { stroke: var(--brown-700); stroke-width: 1.8; }
+html[data-mode="dev"] .topo-enc .ico { stroke: var(--orange); }
+.topo-enc-lbl { fill: var(--brown-700); font-size: 12px; font-weight: 800; }
+html[data-mode="dev"] .topo-enc-lbl { fill: var(--orange); }
+html[data-mode="dev"] .topo-relay rect { fill: #E0913F; stroke: #F0A457; }
+html[data-mode="dev"] .topo-node rect { fill: #33241A; stroke: #5C4231; }
+html[data-mode="dev"] .topo-enc { fill: #3A2818; }
+html[data-mode="dev"] .topo-node .lbl { fill: var(--cream); }
+html[data-mode="dev"] .topo-node .sub { fill: var(--text-soft); }
+html[data-mode="dev"] .topo-relay .lbl { fill: #23160D; }
+html[data-mode="dev"] .topo-relay .sub { fill: #3A2A1A; }
+
+.topo-foot {
+  margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.topo-status { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 700; color: var(--text-soft); }
+/* 状态点：不用绿/红（BRAND 禁冷色）——
+   正常 = 深棕实心，异常 = 空心 + 浅棕，一眼能看出但不出冷色。 */
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-mute); flex: none; }
+.dot.ok { background: var(--brown-700); box-shadow: 0 0 0 3px rgba(107, 66, 38, .16); }
+.dot.bad { background: transparent; border: 2px solid var(--brown-500); }
+html[data-mode="dev"] .dot.ok { background: var(--orange); box-shadow: 0 0 0 3px rgba(224, 145, 63, .18); }
+html[data-mode="dev"] .dot.bad { background: transparent; border-color: var(--text-mute); }
+.tag {
+  font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px;
+  background: var(--brown-100); color: var(--text-mute);
+}
+.tag.ok { background: var(--brown-100); color: var(--brown-700); }
+.tag.bad { background: transparent; border: 1px solid var(--brown-500); color: var(--brown-600); }
+html[data-mode="dev"] .tag.ok { background: #3A2818; color: var(--orange); }
+html[data-mode="dev"] .tag.bad { background: transparent; border-color: var(--text-mute); color: var(--text-mute); }
+
+/* ══════════ 区块 ══════════ */
+.section { padding: 78px 0; position: relative; }
+.section-alt {
+  background: linear-gradient(180deg, #FFF9F2 0%, #FFFCF8 100%);
+  border-block: 1px solid var(--brown-200);
+}
+html[data-mode="dev"] .section-alt { background: linear-gradient(180deg, rgba(38, 27, 20, .75), var(--page-bg)); }
+.section h2 { font-size: clamp(27px, 3.4vw, 38px); letter-spacing: -.02em; }
+.section-lede { font-size: 16.5px; color: var(--text-soft); max-width: 66ch; margin-bottom: 34px; }
+
+.grid { display: grid; gap: 20px; }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.card {
+  background: var(--card-warm); border: 1px solid var(--line-strong);
+  border-radius: var(--radius); padding: 28px 24px;
+  box-shadow: var(--shadow-s);
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s;
+}
+.card:hover {
+  transform: translateY(-3px); box-shadow: var(--shadow);
+  border-color: var(--brown-300);
+}
+html[data-mode="dev"] .card:hover { border-color: var(--brown-300); }
+.card h3 { font-size: 18.5px; margin-bottom: 8px; }
+.card p { color: var(--text-soft); font-size: 15px; margin-bottom: 0; }
+.card p + p { margin-top: 8px; }
+
+/* 卡片图标 —— 给白卡片一个视觉锚点，不然一片框看着像没做完 */
+.card-ico {
+  display: grid; place-items: center;
+  width: 42px; height: 42px; border-radius: 12px;
+  background: var(--orange-soft); margin-bottom: 16px;
+}
+.card-ico svg {
+  width: 21px; height: 21px; fill: none;
+  stroke: var(--brown-700); stroke-width: 1.9;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+html[data-mode="dev"] .card-ico { background: #3A2818; }
+html[data-mode="dev"] .card-ico svg { stroke: var(--orange); }
+/* 「看不到什么」这张卡：不用红框（BRAND 禁冷色），
+   改用深棕实心边框 —— 反而更强调「这是重点」。 */
+.card.danger { border-color: var(--brown-700); border-width: 1.5px; background: var(--brown-100); }
+.card.danger h3 { color: var(--brown-900); }
+html[data-mode="dev"] .card.danger { background: #2A1D15; border-color: var(--orange); }
+html[data-mode="dev"] .card.danger h3 { color: var(--orange); }
+
+/* 勾/叉：BRAND.md 禁止冷色（蓝绿灰）——
+   所以不用绿勾红叉，改成深棕勾（能看到的）和浅棕叉（看不到的），
+   靠深浅区分「有」和「无」，不靠红绿。 */
+.ticks, .crosses { list-style: none; padding: 0; margin: 12px 0 0; }
+.ticks li, .crosses li {
+  position: relative; padding-left: 26px; margin-bottom: 8px;
+  font-size: 14.5px; color: var(--text-soft);
+}
+.ticks li::before {
+  content: "✓"; position: absolute; left: 0; top: 0;
+  color: var(--brown-700); font-weight: 900; font-size: 15px;
+}
+.crosses li::before {
+  content: "✕"; position: absolute; left: 0; top: 0;
+  color: var(--brown-500); font-weight: 900; font-size: 15px;
+}
+html[data-mode="dev"] .ticks li::before { color: var(--orange); }
+html[data-mode="dev"] .crosses li::before { color: var(--text-mute); }
+
+/* ---------- 步骤 ---------- */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.steps li {
+  display: flex; gap: 18px; align-items: flex-start;
+  background: var(--card-warm); border: 1px solid var(--line-strong);
+  border-radius: var(--radius); padding: 22px 24px;
+  box-shadow: var(--shadow-s);
+}
+.step-num {
+  flex: none; width: 38px; height: 38px; display: grid; place-items: center;
+  border-radius: 50%; background: var(--orange); color: var(--on-orange);
+  font-weight: 900; font-size: 16px;
+  box-shadow: 0 6px 16px rgba(212, 130, 58, .3);
+}
+.steps h3 { font-size: 18px; margin-bottom: 6px; }
+.steps p { color: var(--text-soft); font-size: 15px; margin-bottom: 0; }
+.steps p + p { margin-top: 6px; }
+
+.plain-card {
+  background: var(--card-warm); border: 1px solid var(--line-strong);
+  border-radius: var(--radius-l); padding: 32px 28px;
+  box-shadow: var(--shadow); margin-top: 32px;
+}
+.plain-card h3 { font-size: 21px; margin-bottom: 20px; }
+
+/* ---------- 代码块 ---------- */
+.code-card {
+  background: var(--hero-code-bg); border-radius: var(--radius);
+  box-shadow: var(--shadow-l); overflow: hidden;
+  border: 1px solid rgba(210, 180, 140, .22);
+}
+.code-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 18px; border-bottom: 1px solid rgba(210, 180, 140, .16);
+  background: rgba(255, 248, 240, .04);
+}
+.code-title { font-size: 12.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--brown-300); flex: 1; }
+.code-foot {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  padding: 13px 18px; border-top: 1px solid rgba(210, 180, 140, .16);
+  font-size: 13.5px; color: #C9AE92;
+}
+.code-foot .link-btn { color: var(--brown-300); margin-left: auto; }
+.code-foot .link-btn:hover { color: #FFF; }
+pre.code {
+  margin: 0; padding: 18px; overflow-x: auto;
+  font-family: var(--mono); font-size: 13px; line-height: 1.7;
+  color: #E8D4BB;
+}
+pre.code code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+/* ---------- FAQ ---------- */
+.faq { display: grid; gap: 10px; }
+.faq details, #faq details {
+  background: var(--card-warm); border: 1px solid var(--line-strong);
+  border-radius: var(--radius); padding: 0 22px; overflow: hidden;
+  box-shadow: var(--shadow-s);
+  transition: border-color .2s;
+}
+.faq details[open], #faq details[open] { border-color: var(--line-strong); }
+.faq summary, #faq summary {
+  cursor: pointer; list-style: none; font-weight: 700; font-size: 16px;
+  padding: 18px 0; position: relative; padding-right: 34px;
+}
+.faq summary::-webkit-details-marker, #faq summary::-webkit-details-marker { display: none; }
+.faq summary::after, #faq summary::after {
+  content: "+"; position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  width: 24px; height: 24px; border-radius: 7px;
+  background: var(--orange-soft); color: var(--brown-700);
+  display: grid; place-items: center; font-size: 17px; font-weight: 800;
+}
+.faq details[open] summary::after, #faq details[open] summary::after { content: "−"; }
+.faq p, #faq p { color: var(--text-soft); font-size: 15px; margin: 0 0 18px; }
+
+/* ---------- 下载 ---------- */
+.dl-main, .dl-side {
+  background: var(--card-warm); border: 1px solid var(--line-strong);
+  border-radius: var(--radius); padding: 28px 26px;
+  box-shadow: var(--shadow-s);
+}
+.dl-main { border-color: var(--orange); border-width: 1.5px; }
+.dl-main h3, .dl-side h3 { font-size: 19px; margin-bottom: 8px; }
+.dl-main p, .dl-side p { color: var(--text-soft); font-size: 15px; }
+
+/* ---------- CTA ---------- */
+.cta-band {
+  padding: 84px 0; text-align: center;
+  background: linear-gradient(150deg, var(--brown-700) 0%, var(--brown-900) 62%, #2E2018 100%);
+  color: var(--cream);
+  position: relative; overflow: hidden;
+}
+/* 暖光晕 —— 深色块上不做点渐变就死板 */
+.cta-band::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(46% 60% at 22% 18%, rgba(212, 130, 58, .30), transparent 70%),
+    radial-gradient(40% 52% at 80% 82%, rgba(212, 130, 58, .18), transparent 72%);
+}
+.cta-band .wrap { position: relative; z-index: 1; }
+html[data-mode="dev"] .cta-band {
+  background: linear-gradient(150deg, #3A2A1A 0%, #241A13 58%, #1C1310 100%);
+  border-top: 1px solid var(--line-strong);
+}
+html[data-mode="dev"] .cta-band::before {
+  background:
+    radial-gradient(46% 60% at 22% 18%, rgba(224, 145, 63, .26), transparent 70%),
+    radial-gradient(40% 52% at 80% 82%, rgba(224, 145, 63, .14), transparent 72%);
+}
+.cta-band h2 { color: var(--cream); font-size: clamp(30px, 4vw, 44px); margin-bottom: 10px; letter-spacing: -.02em; }
+.cta-band p { color: rgba(255, 248, 240, .78); font-size: 17px; margin-bottom: 30px; }
+html[data-mode="dev"] .cta-band h2 { color: var(--cream); }
+html[data-mode="dev"] .cta-band p { color: var(--text-soft); }
+/* CTA 区是深色底，主按钮用亮橙 —— 深棕压深棕看不见 */
+.cta-band .btn-primary {
+  background: var(--orange); color: #23160D;
+  box-shadow: 0 10px 26px rgba(212, 130, 58, .34);
+}
+.cta-band .btn-primary:hover { background: var(--orange-600); color: #23160D; }
+
+/* ---------- 页脚 ---------- */
+.foot { border-top: 1px solid var(--line); padding: 44px 0 40px; background: var(--card-bg); }
+.foot-inner { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between; }
+.foot b { font-size: 16px; }
+.foot-links { display: flex; flex-wrap: wrap; gap: 18px; }
+.foot-links a { color: var(--text-soft); font-size: 14px; font-weight: 600; }
+.foot-links a:hover { color: var(--text-accent); text-decoration-color: var(--orange); }
+.foot p { margin: 0; flex-basis: 100%; }
+
+/* ══════════ 模式显隐 ══════════ */
+html[data-mode="lite"] .only-dev { display: none !important; }
+html[data-mode="dev"] .only-lite { display: none !important; }
+
+/* ══════════ 响应式 ══════════ */
+@media (max-width: 960px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+  .hero { padding: 56px 0 52px; }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .nav-links {
+    position: absolute; top: 66px; left: 0; right: 0;
+    flex-direction: column; align-items: stretch; gap: 2px;
+    background: var(--card-bg); border-bottom: 1px solid var(--line);
+    padding: 12px 20px 18px; box-shadow: var(--shadow);
+    display: none;
+  }
+  .nav-links.open { display: flex; }
+  .nav-toggle { display: flex; }
+  .mode-switch { display: none; }
+  .mode-btn-mobile { display: inline-block; }
+  .nav-actions { margin-left: auto; }
+}
+@media (max-width: 620px) {
+  .grid-3, .grid-2 { grid-template-columns: 1fr; }
+  .section { padding: 56px 0; }
+  .lede { font-size: 16px; }
+  .hero-cta .btn { flex: 1 1 100%; }
+  .topo { padding: 20px 16px; }
+}
+
+/* ══════════ 动效
+   BRAND.md 说「不使用过度装饰或花哨的动画」——
+   所以只做：淡入上移、模式切换过渡、悬停反馈。
+   不做视差、不做弹跳、不做粒子、不做滚动渐显。
+   ══════════ */
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 首屏进场 */
+.hero-copy > * { animation: fadeUp .55s var(--ease) both; }
+.hero-copy > *:nth-child(1) { animation-delay: .02s; }
+.hero-copy > *:nth-child(2) { animation-delay: .08s; }
+.hero-copy > *:nth-child(3) { animation-delay: .14s; }
+.hero-copy > *:nth-child(4) { animation-delay: .2s; }
+.hero-copy > *:nth-child(5) { animation-delay: .26s; }
+.hero-copy > *:nth-child(6) { animation-delay: .32s; }
+.topo { animation: fadeUp .6s var(--ease) .12s both; }
+
+/* 模式切换的圆形扩散
+   —— 从被点的按钮位置长出一圈新模式的主题色，扫过的地方换配色。
+   比"盖一层白幕"强得多：那只是硬切加个遮挡，这看着是真的在变。 */
+.mode-ripple {
+  position: fixed; z-index: 9999; pointer-events: none;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: transform .62s cubic-bezier(.4, 0, .2, 1), opacity .2s linear;
+  will-change: transform;
+}
+.mode-ripple.grow { transform: scale(1); }
+.mode-ripple.fade { opacity: 0; }
+
+/* 模式切换时内容整体轻微下沉，撤幕时弹回来 */
+.mode-shifting main, .mode-shifting .nav, .mode-shifting .foot {
+  transform: translateY(6px);
+  transition: transform .22s var(--ease);
+}
+
+/* 卡片悬停：轻微抬起 + 橙色描边亮起 */
+.card { transition: transform .28s var(--ease), box-shadow .28s var(--ease), border-color .28s var(--ease); }
+.card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--orange); }
+
+/* 步骤卡片依次进场 */
+.steps li { transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease); }
+.steps li:hover { transform: translateX(4px); border-color: var(--orange); box-shadow: var(--shadow-s); }
+
+/* 按钮按下去 */
+.btn { transition: transform .16s var(--ease), background .22s var(--ease), color .22s var(--ease), border-color .22s var(--ease), box-shadow .22s var(--ease); }
+.btn:active { transform: translateY(1px) scale(.985); }
+
+/* FAQ 展开淡入 */
+.faq details[open] p { animation: fadeIn .35s var(--ease) both; }
+
+/* 拓扑图的加密带淡入 */
+.topo-enc { animation: fadeIn .8s var(--ease) .5s both; }
+
+/* 模式切换时整页过渡 */
+body, .card, .topo, .steps li, .nav, .foot, .mode-switch, .mode-veil {
+  transition: background .3s var(--ease), color .3s var(--ease), border-color .3s var(--ease), box-shadow .3s var(--ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .hero-copy > *, .topo, .topo-enc, .faq details[open] p { animation: none !important; }
+  *, *::before, *::after { transition-duration: .001ms !important; }
+}
