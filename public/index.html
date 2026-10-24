@@ -130,70 +130,71 @@
         <span class="muted">wss://</span>
       </div>
 
-      <svg class="topo-svg" viewBox="0 0 460 330" role="img"
+      <svg class="topo-svg" viewBox="0 0 460 296" role="img"
            aria-label="拓扑图：手机通过加密中继连接电脑，中继看不到内容">
-        <!-- 双向连线：手机 ⇄ 中继 ⇄ 电脑 -->
-        <path class="topo-wire topo-wire-dash" d="M 118 140 H 168" />
-        <path class="topo-wire topo-wire-dash" d="M 292 140 H 342" />
-        <path class="topo-arrow" d="M 168 140 l -11 -7 v 14 z" />
-        <path class="topo-arrow" d="M 292 140 l 11 -7 v 14 z" />
+        <!-- 双向连线 -->
+        <path class="topo-wire topo-wire-dash" d="M 116 100 H 182" />
+        <path class="topo-wire topo-wire-dash" d="M 278 100 H 344" />
+        <path class="topo-arrow" d="M 116 100 l 11 -6.5 v 13 z" />
+        <path class="topo-arrow" d="M 182 100 l -11 -6.5 v 13 z" />
+        <path class="topo-arrow" d="M 278 100 l 11 -6.5 v 13 z" />
+        <path class="topo-arrow" d="M 344 100 l -11 -6.5 v 13 z" />
+        <text class="topo-note" x="149" y="86" text-anchor="middle">WSS</text>
+        <text class="topo-note" x="311" y="86" text-anchor="middle">WSS</text>
 
         <!-- 手机 -->
-        <g class="topo-node" transform="translate(28 46)">
-          <rect x="0" y="0" width="90" height="188" rx="17" />
-          <rect class="ico-solid" x="34" y="9" width="22" height="3.5" rx="1.75" />
-          <g class="ico" transform="translate(28 34)">
-            <rect x="0" y="0" width="34" height="56" rx="6" />
-            <line x1="8" y1="47" x2="26" y2="47" />
+        <g class="topo-node" transform="translate(20 26)">
+          <rect class="node-box" x="0" y="0" width="96" height="160" rx="16" />
+          <g class="ico" transform="translate(35 22)">
+            <rect x="0" y="0" width="26" height="44" rx="5" />
+            <line x1="8" y1="37" x2="18" y2="37" />
           </g>
-          <text class="lbl" x="45" y="126" text-anchor="middle">手机</text>
-          <text class="sub" x="45" y="145" text-anchor="middle">Android App</text>
-          <text class="sub" x="45" y="163" text-anchor="middle">控制端 / 观察端</text>
+          <text class="lbl" x="48" y="104" text-anchor="middle">手机</text>
+          <text class="sub" x="48" y="123" text-anchor="middle">Android App</text>
+          <text class="sub" x="48" y="140" text-anchor="middle">控制端 / 观察端</text>
         </g>
 
-        <!-- 中继：服务器机架（不再用锁 —— 锁的 path 画出来像墓碑） -->
-        <g class="topo-node topo-relay" transform="translate(168 46)">
-          <rect x="0" y="0" width="124" height="188" rx="17" />
-          <g class="ico" transform="translate(36 38)">
-            <rect x="0" y="0" width="52" height="62" rx="6" />
-            <line x1="8" y1="15" x2="44" y2="15" />
-            <line x1="8" y1="31" x2="44" y2="31" />
-            <line x1="8" y1="47" x2="34" y2="47" />
-            <circle class="ico-dot" cx="41" cy="47" r="2.6" />
+        <!-- 中继：两层机架 + 指示灯（不是文档，不是墓碑，不是锁） -->
+        <g class="topo-node topo-relay" transform="translate(182 26)">
+          <rect class="node-box" x="0" y="0" width="96" height="160" rx="16" />
+          <g class="ico" transform="translate(26 22)">
+            <rect x="0" y="0" width="44" height="17" rx="4" />
+            <circle class="ico-dot" cx="7" cy="8.5" r="2.4" />
+            <line x1="15" y1="8.5" x2="36" y2="8.5" />
+            <rect x="0" y="23" width="44" height="17" rx="4" />
+            <circle class="ico-dot" cx="7" cy="31.5" r="2.4" />
+            <line x1="15" y1="31.5" x2="36" y2="31.5" />
           </g>
-          <text class="lbl" x="62" y="126" text-anchor="middle">中继</text>
-          <text class="sub" x="62" y="145" text-anchor="middle">盲转发</text>
-          <text class="sub" x="62" y="163" text-anchor="middle">看不到明文</text>
+          <text class="lbl" x="48" y="104" text-anchor="middle">中继</text>
+          <text class="sub" x="48" y="123" text-anchor="middle">盲转发</text>
+          <text class="sub" x="48" y="140" text-anchor="middle">看不到明文</text>
         </g>
 
         <!-- 电脑 -->
-        <g class="topo-node" transform="translate(342 46)">
-          <rect x="0" y="0" width="90" height="188" rx="17" />
-          <g class="ico" transform="translate(22 42)">
-            <rect x="0" y="0" width="46" height="29" rx="3" />
-            <line x1="23" y1="29" x2="23" y2="38" />
-            <line x1="9" y1="38" x2="37" y2="38" />
+        <g class="topo-node" transform="translate(344 26)">
+          <rect class="node-box" x="0" y="0" width="96" height="160" rx="16" />
+          <g class="ico" transform="translate(26 24)">
+            <rect x="0" y="0" width="44" height="30" rx="3" />
+            <line x1="22" y1="30" x2="22" y2="37" />
+            <line x1="11" y1="37" x2="33" y2="37" />
           </g>
-          <text class="lbl" x="45" y="126" text-anchor="middle">电脑</text>
-          <text class="sub" x="45" y="145" text-anchor="middle">MollyPaw 桌面端</text>
-          <text class="sub" x="45" y="163" text-anchor="middle">真正的计算在这里</text>
+          <text class="lbl" x="48" y="104" text-anchor="middle">电脑</text>
+          <text class="sub" x="48" y="123" text-anchor="middle">MollyPaw 桌面端</text>
+          <text class="sub" x="48" y="140" text-anchor="middle">真正的计算在这里</text>
         </g>
 
-        <!-- 端到端加密：盾牌（不是锁） -->
-        <g transform="translate(230 262)">
-          <rect class="topo-enc" x="-160" y="-15" width="320" height="30" rx="15" />
-          <g class="ico" transform="translate(-146 -11)">
+        <!-- 端到端加密 -->
+        <g transform="translate(230 205)">
+          <rect class="topo-enc" x="-172" y="-16" width="344" height="32" rx="16" />
+          <g class="ico" transform="translate(-152 -10.5)">
             <path d="M10 0 L19 3.4 V11 C19 16.4 10 21 10 21 C10 21 1 16.4 1 11 V3.4 Z" />
             <path d="M6.2 10.6 L9 13.4 L14 7.8" />
           </g>
-          <text class="topo-enc-lbl" x="22" y="5" text-anchor="middle">端到端加密 · 中继看不到内容</text>
+          <text class="topo-enc-lbl" x="16" y="5" text-anchor="middle">端到端加密 · 中继看不到内容</text>
         </g>
 
-        <text class="topo-note" x="143" y="130" text-anchor="middle">WSS</text>
-        <text class="topo-note" x="317" y="130" text-anchor="middle">WSS</text>
-
-        <text class="topo-note" x="230" y="303" text-anchor="middle">手机和电脑两端直接对话，中间那台只负责传话</text>
-        <text class="topo-note" x="230" y="322" text-anchor="middle">所有模型调用、文件读写、命令执行都发生在你自己那台电脑上</text>
+        <text class="topo-note" x="230" y="248" text-anchor="middle">手机和电脑两端直接对话，中间那台只负责传话</text>
+        <text class="topo-note" x="230" y="268" text-anchor="middle">模型调用、文件读写、命令执行都发生在你自己那台电脑上</text>
       </svg>
 
       <div class="topo-foot">
@@ -385,49 +386,137 @@
 </section>
 
 <!-- ══════════ 下载 ══════════ -->
-<section class="section section-alt" id="get">
+<section class="section dl-section" id="get">
   <div class="wrap">
-    <h2 class="only-lite">下载<em>，不用注册</em></h2>
-    <h2 class="only-dev">下载 / 构建 / 产物</h2>
-    <p class="section-lede only-lite">
-      下面显示的版本号是我们实时查到的，不会给你过期的包。
-    </p>
-    <p class="section-lede only-dev">
-      版本号以 tag 为准；APK 由 GitHub Actions 打包并附在 Release 上。
-    </p>
+    <header class="sec-head">
+      <h2 class="only-lite">下载<em>，不用注册</em></h2>
+      <h2 class="only-dev">下载 / 镜像 / 校验</h2>
+      <p class="section-lede only-lite">
+        版本号是实时查的，不会给你过期的包。下不动就换条线路 —— 文件完全一样。
+      </p>
+      <p class="section-lede only-dev">
+        版本与资产列表从 GitHub Releases 实时拉取；加速节点由页面并行测速后自动挑选。
+      </p>
+    </header>
 
-    <div class="grid grid-2">
-      <div class="dl-main">
-        <h3>Android 客户端</h3>
-        <p>需要 Android 8.0 以上。首次安装要在系统里允许"安装未知来源应用"。</p>
-        <!-- 没有 /download/ 产物，也懒得每次发版往 Pages 里传包 ——
-             直接指向 GitHub Releases 的 latest，版本信息用 GitHub API 现查。 -->
-        <p style="margin:16px 0 6px"><a class="btn btn-primary" id="apkBtn"
-           href="https://github.com/LK-BLOG/MollyPaw-Android/releases/latest"
-           target="_blank" rel="noopener">下载 APK</a></p>
-        <p class="muted" id="apkMeta">正在读取版本信息…</p>
+    <!-- 实时版本卡 -->
+    <div class="ver-block">
+      <div class="ver-top">
+        <div class="ver-badge">
+          <span class="ver-dot"></span>
+          <span class="ver-label">最新版本</span>
+          <strong class="ver-name" data-ver="name">读取中…</strong>
+        </div>
+        <div class="ver-meta-line">
+          <span class="ver-date" data-ver="date"></span>
+          <span class="ver-src" data-ver="source">正在连 GitHub…</span>
+          <button class="link-btn ver-refresh" id="verRefresh" type="button">重新获取</button>
+        </div>
       </div>
-      <div class="dl-side">
-        <h3>电脑端</h3>
-        <p>MollyPaw 桌面版。远程互联在<b>设置 → 远程互联</b>里开关。</p>
-        <p style="margin:16px 0 6px"><a class="btn btn-ghost" href="https://mollypaw.pages.dev" target="_blank" rel="noopener">去官网下载</a></p>
+
+      <div class="ver-actions">
+        <a class="btn btn-primary btn-lg js-download is-disabled" href="#get" aria-disabled="true" data-dl="primary">
+          <svg viewBox="0 0 24 24" class="ico-line" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 20h16"/></svg>
+          <span class="only-lite">下载安卓端</span><span class="only-dev">下载 APK</span>
+          <em class="dl-size" data-ver="size"></em>
+        </a>
+        <a class="btn btn-outline btn-lg js-download is-disabled" href="#get" aria-disabled="true" data-dl="desktop">
+          电脑端 MollyPaw.exe
+        </a>
+      </div>
+      <p class="ver-route" data-ver="route">正在测速，下载按钮会自动指向最快的节点…</p>
+      <p class="ver-warn" data-ver="error" hidden></p>
+    </div>
+
+    <!-- 国内加速镜像 -->
+    <div class="mirror-box">
+      <div class="mirror-head">
+        <h3>🐾 国内下载慢 / 打不开？</h3>
+        <p>
+          GitHub 在国内经常被墙或龟速。主下载按钮已经会自动挑最快的加速节点；
+          下面每个节点的耗时都是<strong>你本机实测</strong>的，文件与官方完全一致。
+        </p>
+      </div>
+      <div class="mirror-list" id="mirrorList">
+        <p class="mirror-loading">正在测速…</p>
+      </div>
+      <p class="mirror-foot muted">
+        测速用的是真实请求（拿到响应头就中断，不会把整个包下下来），耗时反映的是你到该节点的握手与首包速度。
+        节点挂了就在 <code>assets/js/main.js</code> 的 <code>MIRRORS</code> 里换一条。
+      </p>
+    </div>
+
+    <!-- 小白版：安装说明 -->
+    <div class="only-lite">
+      <div class="plain-card install-card">
+        <h3>下载之后怎么弄？</h3>
+        <ol class="install-steps">
+          <li>下载完把 <code>.apk</code> 文件放到手机里（微信传自己、数据线、网盘都行）。</li>
+          <li>点开它，系统会问「是否允许安装未知来源应用」—— 点<strong>允许</strong>。这是因为没走应用商店，不是病毒。</li>
+          <li>装好之后打开 App，点「配对」，对着电脑屏幕上那个二维码扫一下。</li>
+          <li>电脑那边要点<strong>「同意」</strong>确认这次配对。配对码只能用一次，15 分钟后失效。</li>
+          <li>之后就能在手机上聊天、审批、翻会话、传文件了。断线会自动重连。</li>
+        </ol>
+        <div class="plain-tip">
+          <strong>连不上？</strong>
+          先确认电脑上的 MollyPaw 是开着的、设置里「远程互联」是开着的。
+          电脑关机了手机什么也做不了，会提示「电脑端已离线」。
+        </div>
+      </div>
+
+      <div class="plain-card warn-card">
+        <h3>⚠️ 只有安卓手机能用</h3>
+        <p>需要 <strong>Android 8.0 以上</strong>。iPhone 用不了 —— 做 iOS 版要有苹果开发者账号，目前没这个计划。</p>
+        <p class="muted">电脑端是 Windows 软件，不是手机 App。</p>
       </div>
     </div>
 
-    <div class="only-dev" style="margin-top:20px">
-      <div class="code-card">
-        <div class="code-bar">
-          <span class="code-title">自建中继</span>
+    <!-- 技术版：构建与自建 -->
+    <div class="only-dev">
+      <div class="grid grid-2">
+        <div class="code-card">
+          <div class="code-bar">
+            <span class="code-title">自己构建 APK</span>
+            <button class="copy-btn" id="buildCopyBtn"
+              data-copy="git clone https://github.com/LK-BLOG/MollyPaw-Android.git&#10;cd MollyPaw-Android&#10;./gradlew :app:assembleRelease">
+              <svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 9h10v12H9zM5 15V3h10"/></svg>
+              <span>复制</span>
+            </button>
+          </div>
+<pre class="code"><code><span class="c-comment"># 需要 JDK 17+ 和 Android SDK</span>
+<span class="c-cmd">git clone</span> https://github.com/LK-BLOG/MollyPaw-Android.git
+<span class="c-cmd">cd</span> MollyPaw-Android
+<span class="c-cmd">./gradlew</span> :app:assembleRelease
+
+<span class="c-comment"># 产物</span>
+app/build/outputs/apk/release/app-release.apk</code></pre>
+          <div class="code-foot">
+            <span class="tag">minSdk 26</span>
+            <span class="code-note">CI 用 <code>-DmollypawMirror=official</code> 走官方源；本地默认阿里云镜像。</span>
+          </div>
         </div>
-        <pre class="code">git clone https://github.com/LK-BLOG/MollyPaw-Relay.git
-cd MollyPaw-Relay
-cd worker &amp;&amp; npx wrangler deploy
-npx wrangler pages deploy public --project-name=mollypaw-online</pre>
-        <div class="code-foot">
-          <span>Pages Function 用 <code>durable_objects.bindings</code> 绑 DO；DO 类必须由独立 Worker 导出。</span>
+
+        <div class="plain-card">
+          <h3>运行要求</h3>
+          <p><strong>APK（预打包）</strong>：Android 8.0+（API 26），直接装，不需要 root。</p>
+          <p><strong>从源码构建</strong>：JDK 17+、Android SDK、Gradle 8.9。</p>
+          <p><strong>电脑端</strong>：Windows 10 / 11 64 位。远程互联在「设置 → 远程互联」。</p>
+          <p class="muted">
+            中继源码在
+            <a href="https://github.com/LK-BLOG/MollyPaw-Relay" target="_blank" rel="noopener">MollyPaw-Relay</a>，
+            两条 wrangler 命令就能部署到自己账号下。
+          </p>
         </div>
       </div>
     </div>
+
+    <!-- 完整发布记录 -->
+    <details class="rel-details">
+      <summary>全部版本记录</summary>
+      <div class="rel-list" id="relList">
+        <p class="mirror-loading">正在读取…</p>
+      </div>
+    </details>
   </div>
 </section>
 

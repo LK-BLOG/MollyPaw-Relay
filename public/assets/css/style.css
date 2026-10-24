@@ -345,7 +345,8 @@ html[data-mode="dev"] .hero-glow {
 /* h1 高亮：深棕字 + 橙色荧光块。
    用 ::before 而不是 ::after —— 负 z-index 的伪元素会沉到 body 背景下面（消失）。 */
 .hero h1 .hl::before {
-  content: ""; position: absolute; left: -5%; right: -5%; bottom: .06em;
+  /* right 不能往外扩 —— 扩了会把「AI」后面那个句号也压在橙块上 */
+  content: ""; position: absolute; left: -4%; right: 0; bottom: .06em;
   height: .32em; background: var(--orange); border-radius: 5px; z-index: -1;
   opacity: .75;
 }
@@ -380,38 +381,44 @@ html[data-mode="dev"] .hero h1 .hl::before { opacity: .55; }
 }
 .topo-title { font-size: 12.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--text-mute); }
 .topo-svg { width: 100%; height: auto; display: block; overflow: visible; }
-.topo-node rect { fill: var(--card-warm); stroke: var(--brown-300); stroke-width: 1.5; }
-/* 图标通用样式 —— 必须给 .ico 本身定义，
-   否则 .topo-enc 里的锁（不在 .topo-node 内）会变成实心黑块 */
-.ico { fill: none; stroke: var(--brown-700); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-.ico-solid { fill: var(--brown-300); stroke: none; }
-.ico-dot { fill: var(--brown-700); stroke: none; }
-html[data-mode="dev"] .ico-dot { fill: var(--orange); }
-html[data-mode="dev"] .ico { stroke: var(--orange); }
-html[data-mode="dev"] .ico-solid { fill: var(--brown-300); }
-.topo-node .lbl { fill: var(--brown-900); font-size: 12.5px; font-weight: 800; }
-.topo-node .sub { fill: var(--brown-600); font-size: 10.5px; font-weight: 600; }
-.topo-relay rect { fill: var(--orange); stroke: var(--brown-700); stroke-width: 1.8; }
-/* 橙底上的文字一律用深棕 —— 中棕压橙只有 1.87:1，看不清 */
-.topo-relay .sub { fill: #4A2F1C; }
-.topo-wire { stroke: var(--orange); stroke-width: 2; fill: none; stroke-linecap: round; }
-.topo-wire-dash { stroke-dasharray: 6 6; animation: flow 1.2s linear infinite; }
-@keyframes flow { to { stroke-dashoffset: -24; } }
+/* 节点外框：用 .node-box 类，**不要**用 `.topo-node rect` ——
+   那个选择器会把图标里的 rect 一起填成卡底色，
+   结果图标看着像"卡片里又塞了一张卡片"（实测被用户骂过）。 */
+.topo-node .node-box {
+  fill: var(--card-warm); stroke: var(--brown-300); stroke-width: 1.6;
+}
+/* 中间那台中继：不再用实心橙。
+   一整块橙色太抢眼，图标糊在里面、还比两边宽一圈，看着像块砖。
+   改成浅橙底 + 橙描边，跟两边同一套卡片语言，靠橙色区分角色。 */
+.topo-relay .node-box {
+  fill: var(--orange-soft); stroke: var(--orange); stroke-width: 2.2;
+}
+/* 图标：描边色走变量，dev 模式整体换橙 */
+.ico {
+  --ico: var(--brown-700);
+  fill: none; stroke: var(--ico);
+  stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round;
+}
+.topo-node .ico rect, .topo-node .ico line {
+  fill: none; stroke: var(--ico);
+}
+.ico-dot { fill: var(--ico); stroke: none; }
+.topo-node .lbl { fill: var(--text); font-size: 13px; font-weight: 800; }
+.topo-node .sub { fill: var(--text-soft); font-size: 10.5px; font-weight: 600; }
+.topo-wire { stroke: var(--orange); stroke-width: 2.2; fill: none; stroke-linecap: round; }
+.topo-wire-dash { stroke-dasharray: 7 6; animation: flow 1.2s linear infinite; }
+@keyframes flow { to { stroke-dashoffset: -26; } }
 .topo-arrow { fill: var(--orange); }
 .topo-note { fill: var(--text-mute); font-size: 11px; font-weight: 600; }
 .topo-enc { fill: var(--orange-soft); stroke: var(--orange); stroke-width: 1.4; }
-.topo-enc .ico { stroke: var(--brown-700); stroke-width: 1.8; }
-html[data-mode="dev"] .topo-enc .ico { stroke: var(--orange); }
-.topo-enc-lbl { fill: var(--brown-700); font-size: 12px; font-weight: 800; }
-html[data-mode="dev"] .topo-enc-lbl { fill: var(--orange); }
-html[data-mode="dev"] .topo-relay rect { fill: #E0913F; stroke: #F0A457; }
-html[data-mode="dev"] .topo-node rect { fill: #33241A; stroke: #5C4231; }
-html[data-mode="dev"] .topo-enc { fill: #3A2818; }
-html[data-mode="dev"] .topo-node .lbl { fill: var(--text-on-dark); }
-html[data-mode="dev"] .topo-node .sub { fill: var(--text-soft); }
-html[data-mode="dev"] .topo-relay .lbl { fill: #23160D; }
-html[data-mode="dev"] .topo-relay .sub { fill: #3A2A1A; }
-html[data-mode="dev"] .topo-relay .ico { stroke: #23160D; }
+.topo-enc .ico { --ico: var(--brown-700); stroke-width: 1.8; }
+.topo-enc-lbl { fill: var(--text); font-size: 12px; font-weight: 800; }
+
+/* ---- dev（技术版）---- */
+html[data-mode="dev"] .ico { --ico: var(--orange); }
+html[data-mode="dev"] .topo-node .node-box { fill: #33241A; stroke: #5C4231; }
+html[data-mode="dev"] .topo-relay .node-box { fill: #3A2818; stroke: var(--orange); }
+html[data-mode="dev"] .topo-enc { fill: #3A2818; stroke: var(--orange); }
 
 .topo-foot {
   margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line);
@@ -435,7 +442,7 @@ html[data-mode="dev"] .tag.ok { background: #3A2818; color: var(--orange); }
 html[data-mode="dev"] .tag.bad { background: transparent; border-color: var(--text-mute); color: var(--text-mute); }
 
 /* ══════════ 区块 ══════════ */
-.section { padding: 78px 0; position: relative; }
+.section { padding: 66px 0; position: relative; }
 .section-alt {
   background: linear-gradient(180deg, #FFF9F2 0%, #FFFCF8 100%);
   border-block: 1px solid var(--brown-200);
@@ -525,6 +532,8 @@ html[data-mode="dev"] .crosses li::before { color: var(--text-mute); }
   box-shadow: var(--shadow); margin-top: 32px;
 }
 .plain-card h3 { font-size: 21px; margin-bottom: 20px; }
+/* 外层已经是卡片了，里面那两个别再叠阴影和边框，不然三层框 */
+.plain-card .card { box-shadow: none; background: var(--page-bg); }
 
 /* ---------- 代码块 ---------- */
 .code-card {
@@ -685,23 +694,216 @@ html[data-mode="dev"] .only-lite { display: none !important; }
 .hero-copy > *:nth-child(6) { animation-delay: .32s; }
 .topo { animation: fadeUp .6s var(--ease) .12s both; }
 
-/* 模式切换的圆形扩散
-   —— 从被点的按钮位置长出一圈新模式的主题色，扫过的地方换配色。
-   比"盖一层白幕"强得多：那只是硬切加个遮挡，这看着是真的在变。 */
-.mode-ripple {
-  position: fixed; z-index: 9999; pointer-events: none;
-  border-radius: 50%;
-  transform: scale(0);
-  transition: transform .62s cubic-bezier(.4, 0, .2, 1), opacity .2s linear;
-  will-change: transform;
+/* ══════════ 下载中心 ══════════
+   从 mollypaw.pages.dev 的下载区移植过来：实时版本卡 + 镜像测速 + 历史版本。
+   官网用的变量名（--white / --cream / --brown-* / --shadow*）本站都有对应值。 */
+.dl-section {
+  background: linear-gradient(180deg, var(--card-warm), rgba(245, 237, 227, .55));
 }
-.mode-ripple.grow { transform: scale(1); }
-.mode-ripple.fade { opacity: 0; }
+html[data-mode="dev"] .dl-section {
+  background: linear-gradient(180deg, rgba(38, 27, 20, .7), var(--page-bg));
+}
 
-/* 模式切换时内容整体轻微下沉，撤幕时弹回来 */
-.mode-shifting main, .mode-shifting .nav, .mode-shifting .foot {
-  transform: translateY(6px);
-  transition: transform .22s var(--ease);
+.ver-block {
+  background: var(--card-bg); border: 1px solid var(--line-strong);
+  border-radius: var(--radius-l); padding: 30px 32px;
+  box-shadow: var(--shadow); margin-bottom: 26px;
+}
+.ver-top {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px;
+  justify-content: space-between;
+}
+.ver-badge { display: inline-flex; align-items: center; gap: 10px; }
+.ver-dot {
+  width: 9px; height: 9px; border-radius: 50%; background: var(--orange);
+  animation: pulse 2.4s infinite;
+}
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(212, 130, 58, .5); }
+  70%  { box-shadow: 0 0 0 10px rgba(212, 130, 58, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(212, 130, 58, 0); }
+}
+.ver-label {
+  font-size: 13px; font-weight: 900; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--text-mute);
+}
+.ver-name { font-size: 21px; font-weight: 900; color: var(--text); }
+.ver-meta-line {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
+  font-size: 14px; color: var(--text-mute);
+}
+.ver-src { display: inline-flex; align-items: center; gap: 6px; }
+.ver-src::before {
+  content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--brown-300);
+}
+.ver-src.live::before { background: var(--orange); }
+.ver-src.snapshot::before { background: var(--brown-500); }
+.ver-src.none::before { background: var(--brown-500); }
+.ver-refresh { font-size: 13.5px; }
+.ver-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 24px; }
+.ver-actions .btn { gap: 10px; }
+.ico-line {
+  width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.dl-size { font-style: normal; opacity: .8; font-size: 13.5px; font-weight: 700; }
+.dl-via { font-style: normal; opacity: .85; font-size: 13px; font-weight: 700; margin-left: 4px; }
+.dl-via.weak { opacity: .62; }
+
+/* 禁用态：不要整体降 opacity（文字会糊在底色里看不清）。
+   改成「浅底 + 深字」，字还看得见，只是看着不能点。 */
+.btn-primary.is-disabled {
+  background: var(--brown-200); color: var(--brown-700);
+  cursor: progress; box-shadow: none !important; transform: none !important;
+}
+.btn-outline.is-disabled {
+  background: var(--brown-100); color: var(--brown-600);
+  border-color: var(--brown-200); border-style: dashed;
+  cursor: progress; box-shadow: none !important; transform: none !important;
+}
+.btn-primary.is-disabled:hover,
+.btn-outline.is-disabled:hover {
+  background: var(--brown-200); transform: none !important; box-shadow: none !important;
+}
+.btn-outline.is-disabled:hover { background: var(--brown-100); }
+html[data-mode="dev"] .btn-primary.is-disabled { background: var(--brown-100); color: var(--text-soft); }
+html[data-mode="dev"] .btn-outline.is-disabled {
+  background: rgba(58, 40, 24, .45); color: var(--text-mute); border-color: var(--line-strong);
+}
+html[data-mode="dev"] .btn-primary.is-disabled:hover,
+html[data-mode="dev"] .btn-outline.is-disabled:hover { background: var(--brown-100); }
+
+.ver-route { margin: 16px 0 0; font-size: 14px; color: var(--text-mute); }
+.ver-warn {
+  margin-top: 16px; padding: 12px 16px; border-radius: var(--radius-s);
+  background: var(--orange-soft); border-left: 4px solid var(--orange);
+  font-size: 14.5px; color: var(--text);
+}
+
+.mirror-box {
+  background: var(--card-bg); border: 1px solid var(--line-strong);
+  border-radius: var(--radius-l); padding: 30px 32px; box-shadow: var(--shadow-s);
+  margin-bottom: 34px;
+}
+.mirror-head h3 { font-size: 21px; margin-bottom: 10px; }
+.mirror-head p { color: var(--text-soft); font-size: 15.5px; max-width: 720px; }
+.mirror-list { display: grid; gap: 10px; margin-top: 22px; }
+.mirror-row {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding: 14px 18px; border-radius: var(--radius);
+  border: 1px solid var(--line); background: var(--card-warm);
+  transition: border-color .25s var(--ease), transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.mirror-row:hover {
+  border-color: var(--brown-300); transform: translateX(3px); box-shadow: var(--shadow-s);
+}
+.mirror-row.best {
+  border-color: var(--orange); background: var(--card-bg);
+  box-shadow: 0 10px 26px rgba(212, 130, 58, .16);
+}
+.mirror-name { font-weight: 800; font-size: 15.5px; min-width: 150px; }
+.mirror-host { font-size: 13px; color: var(--text-mute); font-family: var(--mono); }
+.mirror-status { margin-left: auto; font-size: 13.5px; font-weight: 700; }
+.mirror-status.ok { color: var(--orange-600); }
+.mirror-status.wait { color: var(--text-mute); }
+.mirror-status.bad { color: var(--text-mute); text-decoration: line-through; }
+.mirror-row .btn { padding: 8px 18px; font-size: 14px; }
+.mirror-foot { margin-top: 16px; font-size: 13.5px; }
+.mirror-loading { color: var(--text-mute); font-size: 15px; padding: 6px 0; }
+
+.install-card { margin-top: 34px; }
+.install-steps { list-style: none; counter-reset: ins; margin: 6px 0 0; padding: 0; display: grid; gap: 14px; }
+.install-steps li {
+  counter-increment: ins; position: relative; padding-left: 40px;
+  color: var(--text-soft); font-size: 15.5px;
+}
+.install-steps li::before {
+  content: counter(ins); position: absolute; left: 0; top: 1px;
+  width: 26px; height: 26px; display: grid; place-items: center;
+  border-radius: 50%; background: var(--orange-soft); color: var(--text);
+  font-weight: 900; font-size: 13.5px;
+}
+.install-steps strong { color: var(--text); }
+.plain-tip {
+  margin-top: 20px; padding: 16px 18px; border-radius: var(--radius-s);
+  background: var(--orange-soft); border-left: 4px solid var(--orange);
+  font-size: 15px; color: var(--text);
+}
+.plain-tip p { margin: 0; }
+.plain-tip strong { color: var(--text); }
+.warn-card { margin-top: 20px; border-left: 5px solid var(--orange); }
+.warn-card h3 { color: var(--text); }
+
+.rel-details {
+  margin-top: 34px; background: var(--card-bg); border: 1px solid var(--line-strong);
+  border-radius: var(--radius); padding: 4px 24px; box-shadow: var(--shadow-s);
+}
+.rel-details summary {
+  cursor: pointer; list-style: none; padding: 18px 0;
+  font-weight: 800; font-size: 17px; display: flex; align-items: center;
+  justify-content: space-between;
+}
+.rel-details summary::-webkit-details-marker { display: none; }
+.rel-details summary::after {
+  content: "+"; width: 28px; height: 28px; display: grid; place-items: center;
+  border-radius: 50%; background: var(--orange-soft); color: var(--text); font-weight: 900;
+}
+.rel-details[open] summary::after { content: "−"; }
+.rel-list { padding-bottom: 18px; display: grid; gap: 12px; }
+.rel-item {
+  border: 1px solid var(--line); border-radius: var(--radius-s);
+  padding: 14px 18px; background: var(--card-warm);
+}
+.rel-item-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.rel-item-head strong { font-size: 15.5px; }
+.rel-tag {
+  font-size: 12px; font-weight: 900; padding: 3px 10px; border-radius: 999px;
+  background: var(--brown-100); color: var(--text-soft);
+}
+.rel-tag.latest { background: var(--orange-soft); color: var(--text); }
+.rel-date { font-size: 13px; color: var(--text-mute); margin-left: auto; }
+.rel-assets { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px; }
+.rel-asset { font-size: 13.5px; color: var(--text-soft); }
+.rel-notes {
+  margin-top: 10px; font-size: 14px; color: var(--text-soft); white-space: pre-wrap;
+  max-height: 190px; overflow: auto; border-left: 3px solid var(--line-strong); padding-left: 12px;
+}
+
+/* 代码块里的复制按钮（官网那套，本站之前没有） */
+.copy-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: inherit; border: 0; cursor: pointer;
+  font-size: 13px; font-weight: 700; color: #D2B48C;
+  background: rgba(210, 180, 140, .12); padding: 6px 13px; border-radius: 999px;
+  transition: background .2s var(--ease), color .2s var(--ease);
+}
+.copy-btn .ico { width: 14px; height: 14px; }
+.copy-btn:hover { background: rgba(210, 180, 140, .26); color: #FFF8F0; }
+.copy-btn.ok { background: var(--orange); color: #23160D; }
+
+/* 代码高亮（构建命令卡用）—— 代码块永远是深底，所以颜色写死，不跟着模式变 */
+pre.code .c-comment { color: #C2A181; font-style: italic; }
+pre.code .c-cmd { color: #D2B48C; font-weight: 700; }
+
+/* ══════════ 模式切换动画 ══════════
+   用 View Transitions API：整页拍快照，新快照用 clip-path 圆从按钮长出来。
+   默认的快照交叉淡入淡出要关掉，否则会和我们自己的 clip-path 叠在一起，
+   变成"又淡又扫"的两层动效。 */
+@supports (view-transition-name: none) {
+  ::view-transition-group(root),
+  ::view-transition-image-pair(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+  ::view-transition-old(root) { z-index: 1; }
+  ::view-transition-new(root) { z-index: 2; }
+}
+
+/* 模式切换时内容整体轻微下沉，换完弹回来 */
+main, .nav, .foot {
+  transition: transform .3s var(--ease);
 }
 
 /* 卡片悬停：轻微抬起 + 橙色描边亮起 */
@@ -732,3 +934,4 @@ body, .card, .topo, .steps li, .nav, .foot, .mode-switch, .mode-veil {
   .hero-copy > *, .topo, .topo-enc, .faq details[open] p { animation: none !important; }
   *, *::before, *::after { transition-duration: .001ms !important; }
 }
+
