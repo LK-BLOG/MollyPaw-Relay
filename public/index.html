@@ -308,7 +308,7 @@
       </li>
     </ol>
 
-    <aside class="plain-card reveal" id="roles">
+    <aside class="plain-card" id="roles">
       <h3>两种角色，先想清楚给谁</h3>
       <div class="grid grid-2">
         <div class="card">
@@ -400,7 +400,11 @@
       <div class="dl-main">
         <h3>Android 客户端</h3>
         <p>需要 Android 8.0 以上。首次安装要在系统里允许"安装未知来源应用"。</p>
-        <p style="margin:16px 0 6px"><a class="btn btn-primary" id="apkBtn" href="download/" download>下载 APK</a></p>
+        <!-- 没有 /download/ 产物，也懒得每次发版往 Pages 里传包 ——
+             直接指向 GitHub Releases 的 latest，版本信息用 GitHub API 现查。 -->
+        <p style="margin:16px 0 6px"><a class="btn btn-primary" id="apkBtn"
+           href="https://github.com/LK-BLOG/MollyPaw-Android/releases/latest"
+           target="_blank" rel="noopener">下载 APK</a></p>
         <p class="muted" id="apkMeta">正在读取版本信息…</p>
       </div>
       <div class="dl-side">

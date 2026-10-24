@@ -3,14 +3,19 @@
  * 干三件事：
  *   1. 小白版 / 技术版切换（存 localStorage，URL 带 ?mode= 优先）
  *   2. 中继健康状态（/api/health）
- *   3. APK 版本信息（/download/manifest.json）
+ *   3. APK 版本信息（GitHub Releases latest）
  */
 (function () {
   'use strict';
 
   var root = document.documentElement;
   var HEALTH_URL = '/api/health';
-  var APK_MANIFEST = '/download/manifest.json';
+  // 之前指向 /download/manifest.json —— 那个文件压根不存在（Pages 上没有任何下载产物），
+  // 于是按钮永远是 404、说明永远是"安装包还在路上"。改成直接查 GitHub Releases。
+  var APK_RELEASE_API =
+    'https://api.github.com/repos/LK-BLOG/MollyPaw-Android/releases/latest';
+  var APK_RELEASES_PAGE =
+    'https://github.com/LK-BLOG/MollyPaw-Android/releases/latest';
 
   /* ---------- 模式：读取 / 应用 / 切换 ---------- */
   var MODES = {
@@ -195,21 +200,36 @@
   var apkBtn = document.getElementById('apkBtn');
 
   if (apkMeta) {
-    fetch(APK_MANIFEST, { cache: 'no-store' })
+    fetch(APK_RELEASE_API, { cache: 'no-store' })
       .then(function (r) {
-        if (!r.ok) throw new Error('no manifest');
+        if (!r.ok) throw new Error('no release');
         return r.json();
       })
       .then(function (m) {
+        // GitHub Releases API 的字段是 tag_name / assets[]，没有 version / size
+        var assets = m.assets || [];
+        var apkAsset = null;
+        for (var i = 0; i < assets.length; i++) {
+          if (/\.apk$/i.test(assets[i].name)) {
+            if (!apkAsset || assets[i].size > apkAsset.size) apkAsset = assets[i];
+          }
+        }
         var parts = [];
-        if (m.version) parts.push('v' + m.version);
-        if (m.size) parts.push((m.size / 1048576).toFixed(1) + ' MB');
-        if (m.built_at) parts.push(String(m.built_at).slice(0, 10));
+        if (m.tag_name) parts.push(m.tag_name);
+        if (apkAsset && apkAsset.size) {
+          parts.push((apkAsset.size / 1048576).toFixed(1) + ' MB');
+        }
+        if (m.published_at) parts.push(String(m.published_at).slice(0, 10));
         apkMeta.textContent = parts.length ? parts.join(' · ') : '准备好了';
-        if (apkBtn && m.file) apkBtn.setAttribute('href', '/download/' + m.file);
+        // 有 .apk 资产就直接给直链，省一次跳转
+        if (apkBtn && apkAsset) {
+          apkBtn.setAttribute('href', apkAsset.browser_download_url);
+        }
       })
       .catch(function () {
-        apkMeta.textContent = '安装包还在路上，稍后再来。';
+        // 还没发版 / 被限流 / 离线 —— 都退到 Releases 页面，别摆一句"还在路上"糊弄人
+        apkMeta.textContent = '去 Releases 看最新安装包';
+        if (apkBtn) apkBtn.setAttribute('href', APK_RELEASES_PAGE);
       });
   }
 
