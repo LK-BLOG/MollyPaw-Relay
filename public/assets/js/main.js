@@ -25,7 +25,7 @@
        自己铺一个实色 div 当幕布，只有"纯色铺满"这一种可能 ——
        内容、渐变、阴影全被一块色板盖住，看起来就是"硬切 + 一个圆在上面爬"。
        整页快照是真实内容，圆扫过的地方是真的在换主题。 */
-  var SWITCH_MS = 480;
+  var SWITCH_MS = 620;
 
   function getMode() {
     var m = root.getAttribute('data-mode');
@@ -66,7 +66,7 @@
                      'circle(' + r + 'px at ' + x + 'px ' + y + 'px)'] },
         {
           duration: SWITCH_MS,
-          easing: 'cubic-bezier(.22, .8, .28, 1)',
+          easing: 'cubic-bezier(.4, 0, .2, 1)',
           pseudoElement: '::view-transition-new(root)'
         }
       );

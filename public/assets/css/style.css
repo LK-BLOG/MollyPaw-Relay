@@ -901,11 +901,6 @@ pre.code .c-cmd { color: #D2B48C; font-weight: 700; }
   ::view-transition-new(root) { z-index: 2; }
 }
 
-/* 模式切换时内容整体轻微下沉，换完弹回来 */
-main, .nav, .foot {
-  transition: transform .3s var(--ease);
-}
-
 /* 卡片悬停：轻微抬起 + 橙色描边亮起 */
 .card { transition: transform .28s var(--ease), box-shadow .28s var(--ease), border-color .28s var(--ease); }
 .card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--orange); }
