@@ -1,0 +1,66 @@
+name: release
+
+# 打 tag 自动发版：beta-0.0.0.2.0 -> 跑契约测试 -> 打两个包 -> 建 GitHub Release
+#
+# 中继没有"安装包"，发版发的是**可自建的产物**：
+#   mollypaw-online-site.zip   官网静态站，解压就能扔任何静态托管
+#   mollypaw-relay-worker.zip  Worker + Durable Object 源码，配合 PROTOCOL.md 可自建
+#
+# 版本号唯一真源是 tag；Release 文案由 tools/release_notes.py 从 CHANGELOG.md 抠。
+on:
+  push:
+    tags: ["beta-*", "Beta-*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest websockets
+
+      - name: Relay contract tests
+        run: python -m pytest tests/ -q
+
+      - name: Build packages
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          # 官网静态站
+          (cd public && zip -qr ../dist/mollypaw-online-site.zip .)
+          # 自建用的 Worker 源码（不含 node_modules / .wrangler）
+          zip -qr dist/mollypaw-relay-worker.zip worker functions wrangler.toml PROTOCOL.md README.md LICENSE
+          ls -lh dist
+
+      - name: Prepare release notes
+        run: python tools/release_notes.py "${GITHUB_REF_NAME}" > release-notes.md
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          # tag 可能带 beta-/Beta- 前缀，标题只用纯版本号部分
+          VERSION=$(python -c "import re,sys; m=re.search(r'(\d[\d.]*)$', sys.argv[1]); print(m.group(1) if m else sys.argv[1])" "${GITHUB_REF_NAME}")
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            gh release edit "${GITHUB_REF_NAME}" \
+              --title "MollyPaw Online ${VERSION}" \
+              --notes-file release-notes.md
+            gh release upload "${GITHUB_REF_NAME}" dist/*.zip --clobber
+          else
+            gh release create "${GITHUB_REF_NAME}" \
+              --title "MollyPaw Online ${VERSION}" \
+              --notes-file release-notes.md \
+              dist/*.zip
+          fi
