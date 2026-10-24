@@ -367,6 +367,8 @@ html[data-mode="dev"] .hero h1 .hl::before { opacity: .55; }
    否则 .topo-enc 里的锁（不在 .topo-node 内）会变成实心黑块 */
 .ico { fill: none; stroke: var(--brown-700); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
 .ico-solid { fill: var(--brown-300); stroke: none; }
+.ico-dot { fill: var(--brown-700); stroke: none; }
+html[data-mode="dev"] .ico-dot { fill: var(--orange); }
 html[data-mode="dev"] .ico { stroke: var(--orange); }
 html[data-mode="dev"] .ico-solid { fill: var(--brown-300); }
 .topo-node .lbl { fill: var(--brown-900); font-size: 12.5px; font-weight: 800; }
