@@ -69,6 +69,13 @@
      所以橙色只做背景/色块/图标底，文字一律走深棕。
      需要区分时用 --text-accent（深棕），靠下划线和字重拉开层次。 */
   --text-accent: var(--brown-700);
+
+  /* 深色块（CTA 横幅）上的文字色。
+     必须**独立于 --cream**：暗色模式把 --cream 重定义成 #1C1310，
+     直接拿 --cream 当字色 = 深棕压深棕，CTA 标题直接看不见（用户骂过）。
+     CTA 在两套模式下都是深底，所以这两个变量不跟着模式变。 */
+  --text-on-dark: #FFF8F0;        /* 8.20:1 on --brown-700 */
+  --text-on-dark-soft: #E2C9AC;   /* 5.9:1  on --brown-700 */
 }
 
 /* ---------- 暗色（技术版） ---------- */
@@ -374,6 +381,8 @@ html[data-mode="dev"] .ico-solid { fill: var(--brown-300); }
 .topo-node .lbl { fill: var(--brown-900); font-size: 12.5px; font-weight: 800; }
 .topo-node .sub { fill: var(--brown-600); font-size: 10.5px; font-weight: 600; }
 .topo-relay rect { fill: var(--orange); stroke: var(--brown-700); stroke-width: 1.8; }
+/* 橙底上的文字一律用深棕 —— 中棕压橙只有 1.87:1，看不清 */
+.topo-relay .sub { fill: #4A2F1C; }
 .topo-wire { stroke: var(--orange); stroke-width: 2; fill: none; stroke-linecap: round; }
 .topo-wire-dash { stroke-dasharray: 6 6; animation: flow 1.2s linear infinite; }
 @keyframes flow { to { stroke-dashoffset: -24; } }
@@ -387,10 +396,11 @@ html[data-mode="dev"] .topo-enc-lbl { fill: var(--orange); }
 html[data-mode="dev"] .topo-relay rect { fill: #E0913F; stroke: #F0A457; }
 html[data-mode="dev"] .topo-node rect { fill: #33241A; stroke: #5C4231; }
 html[data-mode="dev"] .topo-enc { fill: #3A2818; }
-html[data-mode="dev"] .topo-node .lbl { fill: var(--cream); }
+html[data-mode="dev"] .topo-node .lbl { fill: var(--text-on-dark); }
 html[data-mode="dev"] .topo-node .sub { fill: var(--text-soft); }
 html[data-mode="dev"] .topo-relay .lbl { fill: #23160D; }
 html[data-mode="dev"] .topo-relay .sub { fill: #3A2A1A; }
+html[data-mode="dev"] .topo-relay .ico { stroke: #23160D; }
 
 .topo-foot {
   margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line);
@@ -568,7 +578,7 @@ pre.code code { background: none; padding: 0; color: inherit; font-size: inherit
 .cta-band {
   padding: 84px 0; text-align: center;
   background: linear-gradient(150deg, var(--brown-700) 0%, var(--brown-900) 62%, #2E2018 100%);
-  color: var(--cream);
+  color: var(--text-on-dark);
   position: relative; overflow: hidden;
 }
 /* 暖光晕 —— 深色块上不做点渐变就死板 */
@@ -588,10 +598,9 @@ html[data-mode="dev"] .cta-band::before {
     radial-gradient(46% 60% at 22% 18%, rgba(224, 145, 63, .26), transparent 70%),
     radial-gradient(40% 52% at 80% 82%, rgba(224, 145, 63, .14), transparent 72%);
 }
-.cta-band h2 { color: var(--cream); font-size: clamp(30px, 4vw, 44px); margin-bottom: 10px; letter-spacing: -.02em; }
-.cta-band p { color: rgba(255, 248, 240, .78); font-size: 17px; margin-bottom: 30px; }
-html[data-mode="dev"] .cta-band h2 { color: var(--cream); }
-html[data-mode="dev"] .cta-band p { color: var(--text-soft); }
+.cta-band h2 { color: var(--text-on-dark); font-size: clamp(30px, 4vw, 44px); margin-bottom: 10px; letter-spacing: -.02em; }
+.cta-band p { color: var(--text-on-dark-soft); font-size: 17px; margin-bottom: 30px; }
+
 /* CTA 区是深色底，主按钮用亮橙 —— 深棕压深棕看不见 */
 .cta-band .btn-primary {
   background: var(--orange); color: #23160D;
