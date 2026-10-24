@@ -27,6 +27,7 @@
        整页快照是真实内容，圆扫过的地方是真的在换主题。 */
   var SWITCH_MS = 620;
 
+
   function getMode() {
     var m = root.getAttribute('data-mode');
     return (m === 'dev' || m === 'lite') ? m : 'lite';
