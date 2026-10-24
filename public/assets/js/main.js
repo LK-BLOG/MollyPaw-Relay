@@ -201,7 +201,27 @@
     { name: 'gh.llkk.cc', label: '线路 F', prefix: 'https://gh.llkk.cc/' }
   ];
 
+  // source:
+  //   'live'  拿到版本列表
+  //   'empty' 接口通了，但这个仓库一个 Release 都还没有
+  //   'none'  连不上 GitHub / 被限流
+  // 这三种状态在页面上必须长得不一样 —— 之前全糊成「拿不到版本信息」，
+  // 用户看到只会以为网站坏了。
   var relState = { data: null, source: 'none', latest: null, rawUrl: null, isFileUrl: false };
+
+  var RELEASES_PAGE = 'https://github.com/' + APP_REPO + '/releases';
+  var RELEASES_LATEST = RELEASES_PAGE + '/latest';
+
+  function setNote(el, text, weak) {
+    var note = el.querySelector('.dl-via');
+    if (!note) {
+      note = document.createElement('em');
+      note.className = 'dl-via';
+      el.appendChild(note);
+    }
+    note.textContent = text;
+    note.classList.toggle('weak', !!weak);
+  }
 
   function tier(ms) {
     if (ms < 400) return '很快';
@@ -292,15 +312,20 @@
     if (srcEl) {
       srcEl.className = 'ver-src ' + relState.source;
       srcEl.textContent = relState.source === 'live' ? 'GitHub 实时'
-        : '拿不到版本信息，请手动去 Release 页';
+        : relState.source === 'empty' ? '还没发布过版本'
+        : '连不上 GitHub';
     }
 
     var errEl = document.querySelector('[data-ver="error"]');
     if (errEl) {
       if (relState.source === 'none') {
         errEl.hidden = false;
-        errEl.textContent = '⚠️ 没能从 GitHub 取到版本信息。可能是还没发版，或者网络/限流。' +
-          '稍后点「重新获取」，或者直接去 Release 页看看。';
+        errEl.textContent = '⚠️ 连不上 GitHub（网络或限流），所以取不到版本号和线路测速。' +
+          '点上面的「重新获取」再试一次，或者直接去 Release 页手动下载。';
+      } else if (relState.source === 'empty') {
+        errEl.hidden = false;
+        errEl.textContent = '这个仓库还没有发布过任何版本，所以现在没有包可下。' +
+          '发版之后这个页面会自动显示版本号、包大小和各线路的实测速度。';
       } else {
         errEl.hidden = true;
       }
@@ -309,10 +334,12 @@
     var routeEl = document.querySelector('[data-ver="route"]');
     if (!routeEl) {
       /* 没有 route 元素就算了 */
+    } else if (relState.source === 'empty') {
+      routeEl.textContent = '还没有可以下载的安装包。上面的按钮会带你去 GitHub Releases。';
     } else if (relState.source === 'none') {
-      routeEl.textContent = '还没拿到版本信息 —— 可能这个版本还没发。发版之后这里会自动显示版本号和测速结果。';
+      routeEl.textContent = '连不上 GitHub，暂时没法自动挑线路。上面的按钮会带你去 Releases 页手动下。';
     } else if (!relState.isFileUrl) {
-      routeEl.textContent = '取到版本了，但这个版本没有挂 APK 资产，所以没有可测速的文件。';
+      routeEl.textContent = '这个版本没有挂 APK 资产（可能只发了源码包），所以没有可测速的文件。';
     } else if (!probeState.done) {
       routeEl.textContent = '正在测速，下载按钮会自动指向最快的节点…';
     }
@@ -325,9 +352,12 @@
     var box = document.getElementById('relList');
     if (!box) return;
     if (!list.length) {
-      box.innerHTML = '<p class="mirror-loading">没取到版本记录，去 ' +
-        '<a href="https://github.com/' + APP_REPO + '/releases" target="_blank" rel="noopener">' +
-        'GitHub Releases</a> 看。</p>';
+      box.innerHTML = '<p class="mirror-loading">' +
+        (relState.source === 'empty'
+          ? '还没有发布记录。'
+          : '没取到版本记录，去 <a href="' + RELEASES_PAGE +
+            '" target="_blank" rel="noopener">GitHub Releases</a> 看。') +
+        '</p>';
       return;
     }
     box.innerHTML = '';
@@ -386,71 +416,109 @@
   var probeState = { pending: 0, results: {}, best: null, done: false };
   var mirrorRendered = false;
 
-  function renderMirrors(rawUrl) {
+  // 把 6 条线路的行建出来（只建一次）
+  function renderMirrorRows() {
+    if (mirrorRendered) return;
     var box = document.getElementById('mirrorList');
-    if (!box || !rawUrl) return;
-    var usable = relState.isFileUrl &&
-      /^https:\/\/github\.com\/.+\/releases\/download\//.test(rawUrl);
-    if (!usable) {
-      box.innerHTML = '<p class="mirror-loading">没拿到下载文件地址，镜像拼不出来。' +
-        '稍后点上面的「重新获取」，或者去 <a href="https://github.com/' + APP_REPO +
-        '/releases" target="_blank" rel="noopener">Release 页</a> 自己找。</p>';
-      return;
+    if (!box) return;
+    box.innerHTML = '';
+    MIRRORS.forEach(function (m) {
+      var row = document.createElement('div');
+      row.className = 'mirror-row';
+
+      var name = document.createElement('span');
+      name.className = 'mirror-name';
+      name.textContent = m.label + ' · ' + m.name;
+
+      var host = document.createElement('span');
+      host.className = 'mirror-host';
+      host.textContent = m.prefix;
+
+      var a = document.createElement('a');
+      a.className = 'btn btn-outline mirror-go';
+      a.textContent = '下载';
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.setAttribute('aria-disabled', 'true');
+      a.classList.add('is-disabled');
+
+      var status = document.createElement('span');
+      status.className = 'mirror-status wait';
+      status.textContent = '待测速';
+
+      row.dataset.mirror = m.name;
+      row.appendChild(name);
+      row.appendChild(host);
+      row.appendChild(a);
+      row.appendChild(status);
+      box.appendChild(row);
+
+      m._row = row;
+      m._link = a;
+      m._status = status;
+    });
+    mirrorRendered = true;
+  }
+
+  function resetMirrorRow(m, statusText) {
+    m.ms = undefined;
+    if (m._link) {
+      m._link.setAttribute('href', '#');
+      m._link.textContent = '下载';
+      m._link.classList.add('is-disabled');
+      m._link.setAttribute('aria-disabled', 'true');
     }
-
-    if (!mirrorRendered) {
-      box.innerHTML = '';
-      MIRRORS.forEach(function (m) {
-        var row = document.createElement('div');
-        row.className = 'mirror-row';
-
-        var name = document.createElement('span');
-        name.className = 'mirror-name';
-        name.textContent = m.label + ' · ' + m.name;
-
-        var host = document.createElement('span');
-        host.className = 'mirror-host';
-        host.textContent = m.prefix;
-
-        var a = document.createElement('a');
-        a.className = 'btn btn-outline mirror-go';
-        a.textContent = '下载';
-        a.target = '_blank';
-        a.rel = 'noopener';
-        a.setAttribute('aria-disabled', 'true');
-        a.classList.add('is-disabled');
-
-        var status = document.createElement('span');
-        status.className = 'mirror-status wait';
-        status.textContent = '测速中…';
-
-        row.dataset.mirror = m.name;
-        row.appendChild(name);
-        row.appendChild(host);
-        row.appendChild(a);
-        row.appendChild(status);
-        box.appendChild(row);
-
-        m._row = row;
-        m._link = a;
-        m._status = status;
-      });
-      mirrorRendered = true;
+    if (m._status) {
+      m._status.className = 'mirror-status wait';
+      m._status.textContent = statusText;
     }
+    if (m._row) m._row.classList.remove('best');
+  }
 
+  function setMirrorHint(text) {
+    var hint = document.getElementById('mirrorHint');
+    if (hint) hint.textContent = text || '';
+  }
+
+  // 没有安装包可测时：线路照样列出来，状态写清楚为什么不能点
+  function listIdleReason() {
     probeState.pending = 0;
     probeState.results = {};
     probeState.best = null;
     probeState.done = false;
     MIRRORS.forEach(function (m) {
-      m.ms = undefined;
+      resetMirrorRow(m, relState.source === 'empty' ? '等发版' : '无安装包');
+    });
+    setMirrorHint(relState.source === 'empty'
+      ? '这些是加速线路。现在还没有可测速的安装包，发版之后每条都会跑一次本机实测，最快的那条自动接管上面的下载按钮。'
+      : '这些是加速线路。暂时没拿到安装包地址，所以没法测速。');
+    updatePrimaryDownload();
+  }
+
+  function renderMirrors(rawUrl) {
+    var box = document.getElementById('mirrorList');
+    if (!box) return;
+
+    // 先把 6 条线路画出来 —— 不管有没有安装包。
+    // 之前这里直接 return，页面上一个节点都没有，看着像功能没做完。
+    renderMirrorRows();
+
+    var usable = relState.isFileUrl &&
+      /^https:\/\/github\.com\/.+\/releases\/download\//.test(rawUrl);
+    if (!usable) {
+      listIdleReason();
+      return;
+    }
+    setMirrorHint('');
+
+    // 重新渲染 = 重新测速：状态复位，按钮回到锁定态
+    probeState.pending = 0;
+    probeState.results = {};
+    probeState.best = null;
+    probeState.done = false;
+    MIRRORS.forEach(function (m) {
+      resetMirrorRow(m, '待测速');
       m._link.href = m.prefix + rawUrl;
-      m._link.textContent = '下载';
-      m._link.classList.add('is-disabled');
-      m._link.setAttribute('aria-disabled', 'true');
-      m._status.className = 'mirror-status wait';
-      m._status.textContent = '待测速';
-      m._row.classList.remove('best');
     });
     updatePrimaryDownload();
     scheduleProbe(rawUrl, true);
@@ -603,10 +671,21 @@
     var raw = relState.rawUrl;
 
     if (!raw || !relState.isFileUrl) {
-      // 拿到版本了但没有 .apk 资产 —— 别写"正在获取版本…"，那会让人一直等
-      var why = relState.source === 'none' ? '版本没取到，往下滚手动下载'
-        : (relState.latest ? '这个版本没挂 APK' : '正在获取版本…');
-      lockPrimaryDownload(why);
+      // 没有可下载的 APK 时**不要锁死按钮** —— 锁死等于页面上唯一的主按钮是个死物。
+      // 改成能点的引导：直接带用户去 Releases 页面。
+      var gotoPage = (relState.source === 'empty' || (relState.latest && relState.source === 'live'))
+        ? RELEASES_PAGE : RELEASES_LATEST;
+      var label = relState.source === 'empty' ? '还没发版 · 去 Releases'
+        : relState.source === 'none' ? '去 Releases 手动下'
+        : '这个版本没挂 APK · 去 Releases';
+      document.querySelectorAll('.js-download[data-dl="primary"]').forEach(function (el) {
+        el.setAttribute('href', gotoPage);
+        el.setAttribute('target', '_blank');
+        el.setAttribute('rel', 'noopener');
+        el.classList.remove('is-disabled');
+        el.removeAttribute('aria-disabled');
+        setNote(el, label, true);
+      });
       return;
     }
     if (!probeState.done) {
@@ -651,12 +730,13 @@
       .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(function (raw) {
         var list = normalize(raw);
-        if (!list.length) throw new Error('empty');
         relState.data = list;
-        relState.source = 'live';
+        // 接口通了但列表是空的 —— 这是「还没发版」，不是「网站坏了」
+        relState.source = list.length ? 'live' : 'empty';
         render();
       })
       .catch(function () {
+        // 连不上 / 限流 / 被墙
         relState.data = [];
         relState.source = 'none';
         render();
