@@ -59,9 +59,12 @@
   --card-warm: #FFFCF8;   /* 卡片底：一点点暖，靠阴影浮起 */
   --line: var(--brown-100);
   --line-strong: var(--brown-200);
-  --text: var(--brown-700);
-  --text-soft: var(--brown-600);
-  --text-mute: var(--brown-500);
+  --text: var(--brown-700);          /* #6B4226  白底 8.63:1 */
+  /* 实测（tools/audit_page.py 扫真实渲染）：原来的 #8B5E3C 压白卡 4.60:1，
+     但压 --card-warm #FFFCF8 只剩 4.42，压 --brown-100 #F5EDE3 更低 —— 不达标。
+     #A67B5B 只有 3.75:1。整体压深到 #7A5233（白底 5.72:1，米白 5.43:1）。 */
+  --text-soft: #7A5233;
+  --text-mute: #7A5233;
   --hero-code-bg: var(--brown-900);
 
   /* 文字专用色：BRAND 说「文字用深棕，避免纯黑」。
@@ -207,16 +210,24 @@ html[data-mode="dev"] .nav.scrolled {
 /* 品牌名：MollyPaw 是产品本体，Online 是本站特色 —— 后者更突出 */
 .brand-text { font-size: 19px; letter-spacing: -.015em; }
 .brand-text em {
-  font-style: normal; color: var(--orange);
+  font-style: normal;
+  /* 橙底深字：5.92:1。之前是橙字压橙底（2.44:1），用户说的"左上角 Online 要突出"
+     不是靠颜色堆橙，是靠色块。 */
+  color: var(--on-orange);
   font-weight: 900;
   padding: 2px 9px; margin-left: 2px;
-  background: var(--orange-soft); border-radius: 7px;
+  background: var(--orange); border-radius: 7px;
   font-size: .82em; letter-spacing: .01em;
   display: inline-block; vertical-align: 2px;
 }
 html[data-mode="dev"] .brand-text em { background: #3A2818; color: var(--orange); }
 .foot b em {
-  font-style: normal; color: var(--orange); font-weight: 900;
+  /* 橙字压白底只有 2.98:1。改深棕字 + 橙色下划线，强调还在，对比度 8.63:1。 */
+  font-style: normal; color: var(--text); font-weight: 900;
+  text-decoration: underline;
+  text-decoration-color: var(--orange);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
 }
 
 .nav-links {
@@ -526,13 +537,15 @@ html[data-mode="dev"] .crosses li::before { color: var(--text-mute); }
   padding: 12px 18px; border-bottom: 1px solid rgba(210, 180, 140, .16);
   background: rgba(255, 248, 240, .04);
 }
-.code-title { font-size: 12.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--brown-300); flex: 1; }
+/* 代码块两套模式都是深底（--hero-code-bg = #3A2A1A），所以标题色必须跟模式无关。
+   用 --brown-300 会在 dev 下变成 #7A5B3E（那个值在 dev 是给边框用的），2.22:1 糊死。 */
+.code-title { font-size: 12.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--text-on-dark-soft); flex: 1; }
 .code-foot {
   display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
   padding: 13px 18px; border-top: 1px solid rgba(210, 180, 140, .16);
   font-size: 13.5px; color: #C9AE92;
 }
-.code-foot .link-btn { color: var(--brown-300); margin-left: auto; }
+.code-foot .link-btn { color: var(--text-on-dark); margin-left: auto; }
 .code-foot .link-btn:hover { color: #FFF; }
 pre.code {
   margin: 0; padding: 18px; overflow-x: auto;
